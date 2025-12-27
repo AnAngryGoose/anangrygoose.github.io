@@ -1,52 +1,36 @@
 # Self-Hosted Obsidian LiveSync with Tailscale
 
+## Overview
+
+This guide covers setting up a self-hosted synchronization backend for Obsidian using **CouchDB** and **Obsidian LiveSync**. This approach offers full control over data privacy and sync speed by hosting the database directly.
+
+**Tailscale** is used to secure the connection, allowing devices to sync remotely without opening ports on the router or exposing the database to the public internet.
+
 ---
 
-This setup provides a self-hosted synchronization backend for Obsidian using CouchDB. It is configured to run behind Tailscale for secure remote access without exposing ports to the public internet.
+## Installation
 
-## 1\. Docker Compose Configuration
+### 1. File Permissions (Critical)
 
-The service runs as a specific user (`5984`) to match the internal CouchDB user ID.
+The official CouchDB image runs as a specific internal user with ID `5984`. Docker typically creates volume directories as `root`, which causes the container to crash with `Permission denied` errors.
 
-**`compose.yaml`**
-
-```yaml
-services:
-  couchdb:
-    image: couchdb:latest
-    container_name: couchdb-for-ols
-    user: 5984:5984
-    environment:
-      - COUCHDB_USER=admin  # Change strictly in .env or secrets for production
-      - COUCHDB_PASSWORD=password # Change strictly in .env or secrets for production
-    volumes:
-      - ./couchdb-data:/opt/couchdb/data
-      - ./couchdb-etc:/opt/couchdb/etc/local.d
-    ports:
-      - 5984:5984
-    restart: unless-stopped
-```
-
-## 2\. Permission Management (User 5984)
-
-The official CouchDB image runs as UID/GID `5984`. Since Docker mounts host directories (`./couchdb-data`) with root or current user permissions by default, the container will fail with `Permission denied` when attempting to write configuration files.
-
-**The Fix:**
-Pre-create directories and set strict ownership to UID `5984` before starting the container.
+You must pre-create the directories and assign the correct ownership before starting the container.
 
 ```bash
 mkdir -p ./couchdb-data ./couchdb-etc
 sudo chown -R 5984:5984 ./couchdb-data
 sudo chown -R 5984:5984 ./couchdb-etc
+
 ```
 
-*Note: If you need to edit files in `couchdb-etc` manually later, you must temporarily `chown` them back to your user or edit as root.*
+!!! note
+If you need to edit files in `couchdb-etc` manually later, you may need to temporarily change ownership back to your user (`sudo chown -R $USER:$USER ...`) or use `sudo`.
 
-## 3\. CouchDB Configuration (`docker.ini`)
+### 2. Configuration File (`docker.ini`)
 
-This configuration is injected via the `./couchdb-etc` volume. It handles Large File Support (LFS), legacy authentication, and critical CORS headers for remote sync.
+A configuration file must be injected to handle Large File Support (LFS), CORS headers (essential for remote access), and authentication limits.
 
-**File Location:** `./couchdb-etc/docker.ini`
+Create the file at `./couchdb-etc/docker.ini`:
 
 ```ini
 [couchdb]
@@ -76,107 +60,171 @@ credentials = true
 headers = accept, authorization, content-type, origin, referer
 methods = GET, PUT, POST, HEAD, DELETE
 max_age = 3600
+
 ```
 
-### Configuration Notes
+### 3. Docker Compose
 
-  * **`origins = *`**: Essential for Tailscale. Strict origin validation often fails because the "Origin" header sent by mobile WebViews inside a VPN tunnel may not match the server's expected hostname.
-  * **`methods = ...`**: The standard pre-flight check fails without explicitly allowing `PUT` (for saving notes) and `DELETE`.
-  * **`max_http_request_size`**: Increased to \~4GB to prevent sync failures on vaults containing large binaries.
+Create the `compose.yaml` file.
 
-## 3.1 Run couchdb-init.sh for initialise
+!!! warning "Environment Variables"
+This compose file uses `${COUCHDB_USER}` and `${COUCHDB_PASSWORD}`. You must either create a `.env` file in the same directory with these values or replace them directly in the file.
+
+```yaml
+services:
+  couchdb:
+    image: couchdb:latest
+    container_name: couchdb-for-ols
+    user: 5984:5984
+    environment:
+      - COUCHDB_USER=${COUCHDB_USER}  #Please change as you like.
+      - COUCHDB_PASSWORD=${COUCHDB_PASS} #Please change as you like.
+    volumes:
+      - ./couchdb-data:/opt/couchdb/data
+      - ./couchdb-etc:/opt/couchdb/etc/local.d
+    ports:
+      - 5984:5984
+    restart: unless-stopped
+
 ```
+
+Start the container:
+
+```bash
+docker compose up -d
+
+```
+
+---
+
+## Configuration
+
+### 1. Database Initialization
+
+Once the container is running, the database structure must be initialized.
+
+**Option A: Automatic Script**
+Run this command on the host machine:
+
+```bash
 curl -s https://raw.githubusercontent.com/vrtmrz/obsidian-livesync/main/utils/couchdb/couchdb-init.sh | bash
+
 ```
 
-If it results like the following:
-```
--- Configuring CouchDB by REST APIs... -->
-{"ok":true}
-""
-""
-""
-""
-""
-""
-""
-""
-""
-<-- Configuring CouchDB by REST APIs Done!
-```
+* **Success:** The output will end with `<-- Configuring CouchDB by REST APIs Done!`.
 
-Your CouchDB has been initialised successfully. If you want this manually, please read the script.
+**Option B: Manual Credential Injection**
+If the script fails with errors like `ERROR: Hostname missing` (common in some Docker environments), run the command with specific credentials injected:
 
-If you are using Docker Compose and the above command does not work or displays `ERROR: Hostname missing`, you can try running the following command, replacing the placeholders with your own values:
-```
+```bash
 curl -s https://raw.githubusercontent.com/vrtmrz/obsidian-livesync/main/utils/couchdb/couchdb-init.sh | hostname=http://<YOUR SERVER IP>:5984 username=<INSERT USERNAME HERE> password=<INSERT PASSWORD HERE> bash
+
 ```
 
-## 4\. Generate the setup URI on a desktop device or server
+### 2. Generate Setup URI
+
+The easiest way to configure devices is to generate a "Setup URI" that contains all connection strings and encryption keys. This can be run using `deno` on a desktop or server.
+
 ```bash
-export hostname=https://you.tailscale.ip:5984 #Use tailscale IP
+# Set variables
+export hostname=https://you.tailscale.ip:5984 # Use Tailscale IP
 export database=obsidiannotes 
-export passphrase=dfsapkdjaskdjasdas #This is for the encryption
+export passphrase=dfsapkdjaskdjasdas # This is for encryption
 export username=johndoe
-export password=abc123 #this is your couchdb password in compose.yaml
+export password=abc123 # Matches COUCHDB_PASSWORD in compose.yaml
+
+# Run generator
 deno run -A https://raw.githubusercontent.com/vrtmrz/obsidian-livesync/main/utils/flyio/generate_setupuri.ts
+
 ```
-You will then get the following output:
 
-```bash
-obsidian://setuplivesync?settings=%5B%22tm2DpsOE74nJAryprZO2M93wF%2Fvg.......4b26ed33230729%22%5D
+**Output:**
 
-Your passphrase of Setup-URI is:  patient-haze
+```text
+obsidian://setuplivesync?settings=%5B%22tm2DpsOE74nJAryprZO2M93wF%2Fvg.......
+
+Your passphrase of Setup-URI is: patient-haze
 This passphrase is never shown again, so please note it in a safe place.
+
 ```
 
-Keep a copy of this Setup-URI. Not gonna come back
-## 4\. Tailscale & Network Implementation
+* **Save the Setup URI:** This is needed to configure every device.
+* **Save the Passphrase:** This is needed to decrypt data on new devices.
 
-### Connection String
+---
 
-Mobile OSs often block cleartext HTTP traffic to **hostnames**, even over a VPN. Using this when connected to tailscale only will enable you to safely and easily bypass the required HTTPS when syncing on mobile.
+## Client Setup
 
-  * **Do not use:** `http://my-server-name:5984`
-  * **Use:** `http://100.x.y.z:5984` (The specific Tailscale IP of the host).
+!!! danger "CRITICAL WARNING: Customization Sync"
+During setup, the plugin may ask to enable **"Customization Sync"** or "Configuration Sync" (plugins, themes, settings).
 
-### Android Optimization (optional)
 
-To prevent "Silent Drift" (sync stopping in background):
+**DO NOT ENABLE THIS.**
 
-1.  **Battery:** Set Obsidian app to **Unrestricted** / No Optimization.
-2.  **Plugin Settings:** Manually switch Android clients to "Periodic" (30s) or "Adaptive".
+Syncing configuration files between different platforms (e.g., Windows vs. Android) causes boot loops, UI corruption, and file path conflicts. **Decline all pop-ups** related to syncing hidden folders (`.obsidian`). Only sync markdown notes and media. 
 
-## **<ins>_CRITICAL WARNING: Customization Sync_</ins>**
+When I used this originally it was a **fucking nightmare** to get things syncing correctly, so I'd avoid it. 
 
-During or after setup, the plugin may ask to enable **"Customization Sync"** or "Configuration Sync" (synchronizing plugins, themes, and settings).
 
-  * **DO NOT ENABLE THIS. THIS WILL MAKE USING LIVESYNC A FUCKING NIGHTMARE**
-  * **Decline all pop-ups** related to syncing configuration files or hidden folders (`.obsidian`).
+### Network Configuration (Tailscale)
 
-**Reasoning:** Syncing configuration files between different platforms (e.g., Windows and Android) frequently causes boot loops, UI corruption, and file path conflicts. Sync **only** your notes (markdown) and media.
+When connecting via mobile devices over Tailscale, mobile OSs often block cleartext HTTP traffic to hostnames.
 
-## 5\. Initial Client Setup (Primary Device)
+* **Do NOT use:** `http://my-server-name:5984`
+* **USE:** `http://100.x.y.z:5984` (The specific Tailscale IP of the server).
 
+### Android Optimization
+
+To prevent "Silent Drift" (where sync stops quietly in the background):
+
+1. **Battery:** Set the Obsidian app to **Unrestricted** / No Optimization in Android settings.
+2. **Plugin Settings:** In Obsidian LiveSync settings, switch the sync mode to **"Periodic"** (30s) or **"Adaptive"**.
+
+### Primary Device Setup (First Time)
 
 Perform these steps on the **first** device to initialize the database structure.
 
-1.  Select **"I am setting this up for the first time"**.
-2.  Input the **Setup URI** generated/configured previously.
-3.  Select **"Restart and initialize server"**.
-4.  On the final confirmation/overwrite page: Select **YES** on all prompts.
-5.  On the "Fetch remote config failed" page (Expected, as database is empty): Select **"Skip and Proceed"**.
-6.  On the "Send all Chunks" page: Select **NO**.
-7.  On the "Config Doctor" page: Select **NO** on all prompts.
-8.  Under Sync Settings, enable the LiveSync preset configuration (on all devices)
+1. In Obsidian, open the LiveSync plugin.
+2. Select **"I am setting this up for the first time"**.
+3. Paste the **Setup URI** generated earlier.
+4. Select **"Restart and initialize server"**.
+5. **Confirmation:** Select **YES** on all overwrite prompts.
+6. **Remote Config Fail:** If you see "Fetch remote config failed", select **"Skip and Proceed"** (this is normal for an empty database).
+7. **Send Chunks:** Select **NO**.
+8. **Config Doctor:** Select **NO** on all prompts.
+9. **Enable:** Under Sync Settings, enable the LiveSync preset configuration.
 
-## 6\. Adding Additional Clients
+### Adding Additional Devices
 
-Perform these steps when connecting secondary devices (Mobile/Laptop) to the existing database.
+Perform these steps for additional phones, laptops, or tablets.
 
-1.  Enter the **Setup URI** and **Passphrase**.
-2.  Select **"Restart and fetch data"**.
-3.  On the "Reset Synchronisation on This Device" page: Select the setting applicable to your needs (e.g., Merge or Discard Local).
-4.  On the "All optional Features are disabled" page: Select **OK**.
-5.  On the "Config Doctor" page: Select **NO** on all prompts.
-6. Under Sync Settings, enable the LiveSync preset configuration (on all devices)
+1. Open the LiveSync plugin.
+2. Paste the **Setup URI** and enter the **Passphrase** (`patient-haze` in the example above).
+3. Select **"Restart and fetch data"**.
+4. **Reset Sync:** Choose **Merge** or **Discard Local** depending on preference.
+5. **Optional Features:** Select **OK**.
+6. **Config Doctor:** Select **NO** on all prompts.
+7. **Enable:** Under Sync Settings, enable the LiveSync preset configuration.
+
+
+
+---
+
+## Maintenance
+
+### Updating CouchDB
+
+To update the database version, pull the latest image and restart the container.
+
+```bash
+docker compose pull
+docker compose up -d
+
+```
+
+### Troubleshooting
+
+* **Permission Denied:** If the container loops on startup, check that the `./couchdb-data` folder is owned by `5984:5984`.
+* **CORS Errors:** If connection fails from a new device, ensure `origins = *` is set in the `docker.ini`.
+
+---

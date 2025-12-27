@@ -29,41 +29,51 @@ extra_css:
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+### --- Markdown Extensions --- ###   
 markdown_extensions:
-  - pymdownx.arithmatex:
-      generic: true
+  # Python Markdown's standard code highlighter
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - admonition
+  - pymdownx.details  # (Optional) Enables collapsible "???" blocks
+  # "SuperFences" allows for nesting code blocks in lists, etc.
+  - pymdownx.superfences
+  # Enables the "Copy to Clipboard" button (optional but recommended)
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - attr_list
     
 
 # Your Topic-Based Structure
 nav:
   - Home: index.md
-  - Guides:
-    - Filesystem: 
-      - Management: guides/filesystem/management.md
-      - SnapRAID: guides/filesystem/snapraid.md
-      - MergerFS: guides/filesystem/mergerfs.md
+  - Infrastructure:
+    - Filesystem & Storage: 
+      - Management: infrastructure/filesystem/management.md
+      - SnapRAID: infrastructure/filesystem/snapraid.md
+      - MergerFS: infrastructure/filesystem/mergerfs.md
     - Docker: 
-      - Overview: guides/docker/docker.md
-      - Cheat Sheet: guides/docker/cheatsheet.md
-    - Servarr:
-      - Radarr: guides/servarr/radarr.md
-      - Sonarr: guides/servarr/sonarr.md
-      - Prowlarr: guides/servarr/prowlarr.md
-      - qBittorrent: guides/servarr/qbittorrent.md
+      - Overview: infrastructure/docker/docker.md
+      - Cheat Sheet: infrastructure/docker/cheatsheet.md
     - git:
-      - Git Basics: guides/git/git.md
+      - Git Basics: infrastructure/git/git.md
+    - Shell: 
+      - Zsh: infrastructure/shell/zsh.md
   - Services:
-      - Pi-hole: 
-        - Overview: services/pihole/pihole.md
-        - Docker Compose: services/pihole/compose.md
-      - Omada: 
-        - Overview: services/omada/omada.md
-        - Docker Compose: services/omada/compose.md
-      - Tailscale: 
-        - Overview: services/tailscale/tailscale.md
-      - Obsidian LiveSync:
-        - Overview: services/obslivesync/obslivesync.md
-        - Docker Compose: services/obslivesync/compose.md
-      - Home Assistant:
-        - Overview: services/homeassisstant/homeassisstant.md
-        - Docker Compose: services/homeassisstant/compose.md
+      - Network & Access: 
+        - Pi-hole: services/pihole/pihole.md
+        - Omada: services/omada/omada.md
+        - Tailscale: services/tailscale/tailscale.md
+      - Obsidian LiveSync: services/obslivesync/obslivesync.md
+      - Home Assistant: services/homeassisstant/homeassisstant.md
+      - Cloud Storage: 
+        - Nextcloud: services/nextcloud/nextcloud.md
+        - Immich: services/immich/immich.md
+      - Media Server:
+        - Radarr: services/servarr/radarr.md
+        - Sonarr: services/servarr/sonarr.md
+        - Prowlarr: services/servarr/prowlarr.md
+        - qBittorrent: services/servarr/qbittorrent.md

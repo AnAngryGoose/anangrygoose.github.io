@@ -1,17 +1,21 @@
-# Welcome to MkDocs
+---
+hide:
+  - navigation
+  - toc
+---
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+<div class="hero-container">
 
-## Commands
+  <h1>Project Vanth</h1>
+  
+  <p>
+    Write your documentation in Markdown and create a professional static site in minutes.
+  </p>
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+  <p>
+    <a href="setup/installation/" class="md-button md-button--primary">Get Started</a>
+    
+    <a href="https://github.com/AnAngryGoose" class="md-button">github</a>
+  </p>
 
-## Project layout
-
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+</div>

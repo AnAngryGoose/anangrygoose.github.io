@@ -1,111 +1,197 @@
-# [Pi-Hole](https://github.com/pi-hole/pi-hole)
+# Pi-hole DNS Blocker
+
+## Overview
+The [Pi-hole®](https://github.com/pi-hole/pi-hole) is a [DNS sinkhole](https://en.wikipedia.org/wiki/DNS_Sinkhole) that protects your devices from unwanted content without installing any client-side software.
 
 ---
 
-The Pi-hole® is a [DNS sinkhole](https://en.wikipedia.org/wiki/DNS_Sinkhole) that protects your devices from unwanted content without installing any client-side software.
+## Installation Methods
 
-# One-Step Automated Install
+### Option 1: Docker Compose (Recommended)
+This is the preferred method for this homelab setup. It integrates easily with existing Docker networks and storage.
 
-Those who want to get started quickly and conveniently may install Pi-hole using the following command:
+```yaml
+# More info at [https://github.com/pi-hole/docker-pi-hole/](https://github.com/pi-hole/docker-pi-hole/) and [https://docs.pi-hole.net/](https://docs.pi-hole.net/)
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      # DNS Ports
+      - "53:53/tcp"
+      - "53:53/udp"
+      # Default HTTP Port
+      - "80:80/tcp"
+      # Default HTTPs Port. FTL will generate a self-signed certificate
+      - "443:443/tcp"
+      # Uncomment the below if using Pi-hole as your DHCP Server
+      #- "67:67/udp"
+      # Uncomment the line below if you are using Pi-hole as your NTP server
+      #- "123:123/udp"
+    environment:
+      # Set the appropriate timezone for your location from
+      # [https://en.wikipedia.org/wiki/List_of_tz_database_time_zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g:
+      TZ: 'Europe/London'
+      # Set a password to access the web interface. Not setting one will result in a random password being assigned
+      FTLCONF_webserver_api_password: 'correct horse battery staple'
+      # If using Docker's default `bridge` network setting the dns listening mode should be set to 'ALL'
+      FTLCONF_dns_listeningMode: 'ALL'
+    # Volumes store your data between container upgrades
+    volumes:
+      # For persisting Pi-hole's databases and common configuration file
+      - './etc-pihole:/etc/pihole'
+      # Uncomment the below if you have custom dnsmasq config files that you want to persist. Not needed for most starting fresh with Pi-hole v6. If you're upgrading from v5 you and have used this directory before, you should keep it enabled for the first v6 container start to allow for a complete migration. It can be removed afterwards. Needs environment variable FTLCONF_misc_etc_dnsmasq_d: 'true'
+      #- './etc-dnsmasq.d:/etc/dnsmasq.d'
+    cap_add:
+      # See [https://github.com/pi-hole/docker-pi-hole#note-on-capabilities](https://github.com/pi-hole/docker-pi-hole#note-on-capabilities)
+      # Required if you are using Pi-hole as your DHCP server, else not needed
+      - NET_ADMIN
+      # Required if you are using Pi-hole as your NTP client to be able to set the host's system time
+      - SYS_TIME
+      # Optional, if Pi-hole should get some more processing time
+      - SYS_NICE
+    restart: unless-stopped
 
-```bash
-curl -sSL https://install.pi-hole.net | bash
 ```
 
-<!-- markdownlint-disable code-block-style -->
-!!! info
-    [Piping to `bash` is a controversial topic](https://pi-hole.net/2016/07/25/curling-and-piping-to-bash/), as it prevents you from [reading code that is about to run](https://github.com/pi-hole/pi-hole/blob/master/automated%20install/basic-install.sh) on your system.
+!!! info "Note On Capabilities"
+[FTLDNS](https://docs.pi-hole.net/ftldns/) expects capabilities like `CAP_NET_BIND_SERVICE` (binding port 53) and `CAP_NET_ADMIN` (DHCP).
 
-    If you would prefer to review the code before installation, we provide these alternative installation methods.
-<!-- markdownlint-enable code-block-style -->
+```
+The docker image automatically grants these if available. We explicitly add `NET_ADMIN` in the compose file above to ensure smooth operation.
 
-### Alternative 1: Clone our repository and run
+```
+
+### Option 2: Automated Install (Bare Metal)
+
+If you prefer to install directly on the OS:
 
 ```bash
-git clone --depth 1 https://github.com/pi-hole/pi-hole.git Pi-hole
+curl -sSL [https://install.pi-hole.net](https://install.pi-hole.net) | bash
+
+```
+
+!!! warning "Security Warning"
+[Piping to `bash` is a controversial topic](https://pi-hole.net/2016/07/25/curling-and-piping-to-bash/). It prevents you from reading code before it runs. If you prefer to review the code first, use the methods below.
+
+**Alternatives:**
+
+* **Clone & Run:**
+```bash
+git clone --depth 1 [https://github.com/pi-hole/pi-hole.git](https://github.com/pi-hole/pi-hole.git) Pi-hole
 cd "Pi-hole/automated install/"
 sudo bash basic-install.sh
+
 ```
 
-### Alternative 2: Manually download the installer and run
 
+* **Download Manually:**
 ```bash
-wget -O basic-install.sh https://install.pi-hole.net
+wget -O basic-install.sh [https://install.pi-hole.net](https://install.pi-hole.net)
 sudo bash basic-install.sh
+
 ```
 
-### Alternative 3: Use Docker to deploy Pi-hole
 
-Please refer to the [Pi-hole docker repo](https://github.com/pi-hole/docker-pi-hole) to use the Official Docker Images.
 
-# Making your network take advantage of Pi-hole
+---
 
-Once the installer has been run, you will need to [configure your router to have **DHCP clients use Pi-hole as their DNS server**](https://discourse.pi-hole.net/t/how-do-i-configure-my-devices-to-use-pi-hole-as-their-dns-server/245) which ensures all devices connected to your network will have content blocked without any further intervention.
+## Configuration & Network Setup
 
-If your router does not support setting the DNS server, you can [use Pi-hole's built-in DHCP server](https://discourse.pi-hole.net/t/how-do-i-use-pi-holes-built-in-dhcp-server-and-why-would-i-want-to/3026); just be sure to disable DHCP on your router first (if it has that feature available).
+Once installed, you must configure your network to actually use the Pi-hole.
 
-As a last resort, you can manually set each device to use Pi-hole as its DNS server.
+### Router Configuration
 
-## Making your Pi-hole host use Pi-hole
+Configure your router's DHCP settings to use the Pi-hole's IP address as the **Primary DNS Server**. This ensures all connected devices are automatically protected.
 
-Pi-hole will not be used by the host automatically after installation. To have the host resolve through Pi-hole and your configured blocking lists, you can make the host use Pi-hole as upstream DNS server:
+### Host Configuration (The Server itself)
+
+The host machine running the Pi-hole container does not automatically use it.
+
+**Method 1: DHCPCD (Standard Linux)**
+Add to `/etc/dhcpcd.conf`:
+
+```properties
+static domain_name_servers=127.0.0.1
+
+```
 
 !!! warning
-    If your Pi-hole host is using Pi-hole as upstream DNS server and Pi-hole fails, your host loses DNS resolution. This can prevent successful repair attempts, e.g. by `pihole -r` as it needs a working internet connection.
+If your Pi-hole host uses itself as upstream DNS and Pi-hole fails, the host loses DNS. This can prevent repair attempts (e.g., `pihole -r`) because the internet connection will appear "down."
 
-  If your OS uses `dhcpcd` for network configuration, you can add to your `/etc/dhcpcd.conf`
+**Method 2: Permissions**
+Pi-hole v6 uses a new API. To allow your user to run CLI commands without a password:
 
-```code
-static domain_name_servers=127.0.0.1
-```
-
-## Adding your local user to the 'pihole' group
-
-Pi-hole v6 uses a new API for authentication. All CLI commands use this API instead of e.g. direct database manipulation. If a password is set for API access, the CLI commands also need to authenticate. To avoid entering the password everytime on CLI, Pi-hole allows users which are members of the 'pihole' group to authenticate without manually entering the password (this can be disabled by setting `webserver.api.cli_pw` to `false`.)
-To add your local user to the 'pihole' group use the following command
-
-For Debian/Ubuntu/Raspberry Pi OS/Armbian/Fedora/CentOS
-
-```code
-sudo usermod -aG pihole $USER
-```
-
-For Alpine
-
-```code
-sudo addgroup pihole $USER
-```
-
-# 3. Pi-hole (Local Side)
-*Intercepts local requests to route directly to NPM.*
-* **Config:** `/etc/dnsmasq.d/99-wildcard.conf`
-    ```bash
-    address=/.vanth.me/192.168.0.116
-    ```
-    *(Replace `192.168.0.116` with NPM Host IP)*
-* **Activate:** Settings > Misc > **Enable misc.etc_dnsmasq_d**
-* **Flush:** Run `pihole restartdns` or `ipconfig /flushdns` on client.
-
-# Tailscale Subnet Router
-- **A. Enable IP Forwarding:** 
 ```bash
-# 1. Enable IPv4 forwarding immediately
+# Debian/Ubuntu/RasPi OS
+sudo usermod -aG pihole $USER
+
+# Alpine
+sudo addgroup pihole $USER
+
+```
+
+---
+
+## Advanced: Local DNS & Wildcards
+
+To make your local services reachable via a custom domain (e.g., `service.vanth.me`) while on your LAN, we use `dnsmasq` to intercept requests and point them to your Reverse Proxy (Nginx Proxy Manager).
+
+1. **Create Config:**
+Create `/etc/dnsmasq.d/99-wildcard.conf` inside the container (or mapped volume):
+```text
+address=/.vanth.me/192.168.0.116
+
+```
+
+
+*(Replace `192.168.0.116` with your Nginx Proxy Manager Host IP)*
+2. **Activate:**
+In Pi-hole Settings > Misc > **Enable misc.etc_dnsmasq_d**.
+3. **Flush:**
+Run `pihole restartdns` in the container or `ipconfig /flushdns` on your client machine.
+
+---
+
+## Tailscale Subnet Router Integration
+
+This setup allows you to access your home network (and use your Pi-hole for DNS) from anywhere in the world, without opening ports on your firewall.
+
+### 1. Enable IP Forwarding
+
+You must allow the host to route traffic.
+
+```bash
+# Enable IPv4 forwarding immediately
 sudo sysctl -w net.ipv4.ip_forward=1
 
-# 2. Make the change permanent across reboots
+# Make the change permanent across reboots
 echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.conf
+
 ```
-  - **B. Advertise Subnet Routes:**
-  ```bash
-  # Advertise the 192.168.0.0/24 subnet
+
+### 2. Advertise Subnet Routes
+
+Tell Tailscale that this machine can route traffic to your LAN (192.168.0.x).
+
+```bash
+# Advertise the 192.168.0.0/24 subnet
 sudo tailscale up --advertise-routes=192.168.0.0/24
-  ```
-- **C. Approve Route in Tailscale Admin
-	- Tailscale Admin page
-	- Machines->router node->edit route settings
-	- Approve previously advertised subnet
-	D. **Overview:** 
-	- PI set as nameserver
-	- client queries `service.domain.me` 
-	- PI responds services LAN IP
-	- Since subnet route is approved, remote client traffic auto resolved through tailscale using pi as subnet router
+
+```
+
+### 3. Approve Route
+
+1. Go to the [Tailscale Admin Console](https://login.tailscale.com/admin/machines).
+2. Find your router node (the machine you just configured).
+3. Click the **...** menu -> **Edit route settings**.
+4. Approve the `192.168.0.0/24` route.
+
+### 4. How it works
+
+1. You set Pi-hole as your Nameserver in Tailscale DNS settings.
+2. Your remote phone queries `service.vanth.me`.
+3. Pi-hole resolves this to the LAN IP (`192.168.0.116`).
+4. Because the Subnet Route is active, your phone sends the traffic through the Tailscale tunnel to your home server.
+
+```

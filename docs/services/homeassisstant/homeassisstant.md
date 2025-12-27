@@ -1,73 +1,51 @@
-# Complete Setup Guide: Home Assistant, Zigbee2MQTT (Z2M), & Sonoff MG24
+# Home Assistant & Zigbee Stack
+
+## Overview
+
+This stack integrates **Home Assistant**, **Zigbee2MQTT (Z2M)**, and an **MQTT Broker (Mosquitto)** to create a local, privacy-focused smart home environment.
+
+I am specifically configuring this for the **Sonoff ZBDongle-MG24** (Model "E" or "MG24"), which runs on the Silicon Labs EFR32MG24 chip. This requires the specific `ember` driver in Zigbee2MQTT, unlike the older Texas Instruments-based dongles.
+
+The stack runs via Docker Compose, with Home Assistant running in `host` networking mode for optimal device discovery.
 
 ---
 
-This guide covers the end-to-end installation for a self-hosted Docker environment (Linux), specifically configured for the Sonoff Dongle Plus MG24 (EFR32MG24 chip) and the ThirdReality ZL1 Color Bulb.
-## 1: Hardware Preparation
- * Identify the Dongle:
-   The "m24" refers to the Sonoff ZBDongle-MG24. This uses the newer Silicon Labs EFR32MG24 chip.
-   * Note: Unlike the older "P" model (Texas Instruments), this dongle uses the Ember (EZSP) driver in Zigbee2MQTT.
- * Connect to Server:
-   * Plug the dongle into a USB 2.0 port (or use a USB extension cable to reduce interference from USB 3.0 ports).
-   * Run the following command to find your device ID:
-     `ls -l /dev/serial/by-id/`
+## Installation
 
-   * Copy the output that looks like usb-ITEAD_SONOFF_Zigbee_.... You will need this for the Docker Compose file.
-## 2: Directory Structure
-Create a clean folder structure to keep your configuration persistent and organized.
-`mkdir -p ~/homelab/smarthome/{homeassistant,zigbee2mqtt/data,mosquitto/config,mosquitto/data,mosquitto/log}`
+### 1. Hardware Preparation
 
-##  3: Configuration Files
-You need to create two specific config files before starting the containers.
-1. Mosquitto Configuration
-Create the file ~/homelab/smarthome/mosquitto/config/mosquitto.conf:
-`nano ~/homelab/smarthome/mosquitto/config/mosquitto.conf`
+**Identify the Dongle**
+The Sonoff MG24 uses a different driver protocol than older models. Before configuring software, ensure the dongle is recognized.
 
-Paste the following (allows anonymous access for local LAN simplicity, see notes for security):
-```persistence true
-persistence_location /mosquitto/data/
-log_dest file /mosquitto/log/mosquitto.log
-listener 1883
+1. Plug the dongle into a USB 2.0 port (or use a USB 2.0 extension cable to avoid USB 3.0 interference).
+2. Run the following to identify your specific device ID:
+```bash
+ls -l /dev/serial/by-id/
+
 ```
-## Allow anonymous for internal local network setup
-`allow_anonymous true`
 
-2. Zigbee2MQTT Configuration
-Create the file ~/homelab/smarthome/zigbee2mqtt/data/configuration.yaml:
-`nano ~/homelab/smarthome/zigbee2mqtt/data/configuration.yaml`
 
-Paste the following (Update the port line with your specific ID from Phase 1):
-# Home Assistant Integration
-`homeassistant: true`
+3. Copy the output string. It usually looks like `usb-ITEAD_SONOFF_Zigbee_...` or similar. You will need this for your Compose file.
 
-# MQTT Settings
-```mqtt:
-  base_topic: zigbee2mqtt
-  server: 'mqtt://mosquitto:1883'
-  ``` 
+### 2. Directory Structure
 
-# Serial Settings for Sonoff MG24 (Ember Driver)
+Create a persistent directory structure to store your configurations and data.
+
+```bash
+mkdir -p ~/homelab/smarthome/{homeassistant,zigbee2mqtt/data,mosquitto/config,mosquitto/data,mosquitto/log}
+
 ```
-serial:
-  port: /dev/serial/by-id/usb-ITEAD_SONOFF_Zigbee_3.0_USB_Dongle_Plus_V2_... # <--- PASTE YOUR ID HERE
-  adapter: ember
-  ```
 
-# Frontend Settings (GUI)
-```
-frontend:
-  port: 8080
-  ```
-  
-# Zigbee Network
-`permit_join: false` 
+### 3. Docker Compose
 
-## 4: Docker Compose
-Create your docker-compose.yml file in ~/homelab/smarthome/:
-`nano ~/homelab/smarthome/docker-compose.yml`
+Create your `compose.yaml` file in `~/homelab/smarthome/`.
 
-Paste the following content:
-```
+!!! note "Port Mapping"
+This configuration maps the Zigbee2MQTT frontend to port **8082** to avoid conflicts, and maps the USB device. Ensure the `devices` section matches the ID you found in Step 1.
+
+```yaml
+### --- Smart Home Stack: MQTT Broker, Zigbee2MQTT, Home Assistant --- ###
+
 services:
   # MQTT Broker
   mosquitto:
@@ -95,12 +73,12 @@ services:
     environment:
       - TZ=America/Chicago # Update to your timezone
     devices:
-      # Map the USB dongle directly
-      - /dev/serial/by-id/usb-ITEAD_SONOFF_Zigbee_3.0_USB_Dongle_Plus_V2_...:/dev/ttyACM0 # <--- UPDATE THIS LINE
+      # Map the USB dongle directly. UPDATE THIS to match your 'ls -l' output
+      - /dev/serial/by-id/usb-youthings_Zigbee_Adapter-if00:/dev/ttyACM0
     ports:
-      - "8080:8080" # Web Interface
+      - "8082:8080" # Web Interface
 
-  # Home Assistant
+  # Home Assistant 
   homeassistant:
     container_name: homeassistant
     image: lscr.io/linuxserver/homeassistant:latest
@@ -115,26 +93,124 @@ services:
     depends_on:
       - mosquitto
       - zigbee2mqtt
-``` 
-Launch the stack:
-`docker compose up -d`
 
-## 5: Pairing the ThirdReality Bulb (ZL1)
-Once Docker is running, open the Zigbee2MQTT interface in your browser (http://<server-ip>:8080).
- * Enable Joining: Click the Permit Join (All) button in the top bar.
- * Reset/Pair Bulb:
-   * Screw in the ThirdReality ZL1 bulb.
-   * Power Cycle 5 Times: Turn the switch OFF and ON 5 times quickly (approx. 1 second per toggle).
-     * Sequence: ON -> OFF -> ON -> OFF -> ON -> OFF -> ON -> OFF -> ON.
-   * Visual Confirmation: The bulb will flash a sequence of colors (Warm White -> Cool White -> Red -> Green -> Blue) and then stay solid Warm White.
- * Rename: Once it appears in Zigbee2MQTT, click the blue "Edit" icon to give it a friendly name (e.g., "Office_Lamp"). Make sure "Update Home Assistant entity ID" is checked.
-## 6: Connect Home Assistant
- * Open Home Assistant (http://<server-ip>:8123) and complete the onboarding if new.
- * Navigate to Settings > Devices & Services.
- * Home Assistant should auto-discover "MQTT". If not, click Add Integration > MQTT.
- * Configuration:
-   * Broker: `localhost` (since HA is on host network) or the server IP.
-   * Port: `1883`.
-   * No username/password needed (unless you changed allow_anonymous in Phase 3).
- * Once connected, your "Office_Lamp" will automatically appear in Home Assistant under the MQTT integration.
+```
 
+---
+
+## Configuration
+
+You must create the configuration files for Mosquitto and Zigbee2MQTT before starting the containers, or they will likely crash on boot.
+
+### 1. Mosquitto Broker
+
+Create the file: `~/homelab/smarthome/mosquitto/config/mosquitto.conf`
+
+```text
+persistence true
+persistence_location /mosquitto/data/
+log_dest file /mosquitto/log/mosquitto.log
+
+# Listen on all interfaces
+listener 1883
+
+# Allow anonymous for internal local network setup
+allow_anonymous true
+
+```
+
+### 2. Zigbee2MQTT
+
+Create the file: `~/homelab/smarthome/zigbee2mqtt/data/configuration.yaml`
+
+!!! warning "Driver Selection"
+The `adapter: ember` setting is critical for the Sonoff MG24. If you omit this, Z2M will try to use the default driver and fail to start.
+
+```yaml
+# Home Assistant Integration
+homeassistant: true
+
+# MQTT Settings
+mqtt:
+  base_topic: zigbee2mqtt
+  server: 'mqtt://mosquitto:1883'
+
+# Serial Settings for Sonoff MG24 (Ember Driver)
+serial:
+  # This path inside the container is mapped from your host in the compose file
+  port: /dev/ttyACM0 
+  adapter: ember
+
+# Frontend Settings (GUI)
+frontend:
+  port: 8080
+
+# Zigbee Network
+permit_join: false
+
+```
+
+---
+
+## Setup & Device Pairing
+
+Once the files are created, launch the stack:
+
+```bash
+docker compose up -d
+
+```
+
+### Pairing Devices (Example: ThirdReality ZL1 Bulb)
+
+1. **Access Z2M:** Open `http://<server-ip>:8082`.
+2. **Permit Join:** Click **Permit Join (All)** in the top bar to allow new devices.
+3. **Reset Bulb:**
+* Screw in the ThirdReality ZL1 bulb.
+* **Power Cycle 5 Times:** Turn the switch OFF and ON 5 times quickly (approx. 1 second per toggle).
+* *Sequence:* ON -> OFF -> ON -> OFF -> ON -> OFF -> ON -> OFF -> ON.
+* *Confirmation:* The bulb will flash a sequence of colors (Warm White -> Cool White -> Red -> Green -> Blue) and stay solid Warm White.
+
+
+4. **Rename:** Once it appears in the Z2M dashboard, click the blue "Edit" icon. Give it a friendly name (e.g., "Office_Lamp") and ensure "Update Home Assistant entity ID" is checked.
+
+### Connecting to Home Assistant
+
+1. **Access HA:** Open `http://<server-ip>:8123`.
+2. **Integrations:** Go to **Settings > Devices & Services**.
+3. **Discovery:** HA should auto-discover "MQTT". If not, click **Add Integration > MQTT**.
+4. **Broker Settings:**
+* **Broker:** `localhost` (Since HA is on the host network).
+* **Port:** `1883`.
+* **Auth:** Leave blank (I enabled `allow_anonymous`).
+
+
+5. **Verify:** Your "Office_Lamp" should now appear as a device in Home Assistant.
+
+---
+
+## Maintenance
+
+### Updates
+
+To update the stack, pull the latest images and recreate the containers. Your data is safe in the persistent volumes.
+
+```bash
+docker compose pull
+docker compose up -d
+
+```
+
+### Troubleshooting
+
+If Zigbee2MQTT fails to start, check the logs immediately:
+
+```bash
+docker compose logs zigbee2mqtt
+
+```
+
+* **Error: "Error: Error: No such file or directory..."**: Check your USB mapping in `compose.yaml`. The ID `usb-youthings...` or `usb-ITEAD...` must match exactly what `ls -l /dev/serial/by-id/` shows.
+* **Error: "Adapter failed to start"**: Ensure `adapter: ember` is in your `configuration.yaml`.
+
+---

@@ -1,75 +1,135 @@
-# TP-Link Omada Controller: Quick Guide
+# TP-Link Omada Controller
+
+## Overview
+
+The **Omada Software Defined Networking (SDN)** platform is TP-Link's centralized management solution. It manages gateways (routers), switches, and access points (APs) from a single interface.
+
+While hardware controllers (OC200/OC300) exist, this guide covers running the software controller in a Docker container to utilize existing server hardware.
 
 ---
 
-The **Omada Software Defined Networking (SDN)** platform is TP-Link's centralized management solution, similar to Ubiquiti's UniFi. It allows you to manage gateways (routers), switches, and access points (APs) from a single interface.
+## Installation
 
-## 1. Deployment Options
+### 1. Volume Creation
 
-Before you begin, you need to decide how to run the controller. There are three main methods:
+The `compose.yaml` configuration defines the storage volumes as `external: true`. This means Docker will **not** create them automatically. You must create them manually before launching the container, or the stack will fail to start.
 
-| Type | Description | Best For |
-| --- | --- | --- |
-| **Hardware Controller** | Dedicated physical device (OC200, OC300) powered via PoE. | Plug-and-play simplicity; "set and forget." |
-| **Software Controller** | Application installed on a PC/Server (Windows/Linux). | Enthusiasts with existing servers or limited budget. |
-| **Cloud-Based** | Fully hosted by TP-Link (Subscription required). | MSPs managing many distinct client sites. |
+```bash
+docker volume create omada_data
+docker volume create omada_logs
+docker volume create omada_work
 
-> **Pro Tip:** For home labs or NAS users, the Docker container `mbentley/omada-controller` is the community standard for running the software controller effortlessly.
+```
+
+### 2. Docker Compose
+
+This setup uses the community-standard `mbentley/omada-controller` image. The container is configured with `network_mode: host` to ensure the controller can easily discover devices on the local network via Layer 2 broadcasts.
+
+**`compose.yaml`**
+
+```yaml
+### Omada Controller - TP-Link / Omada network controller ###
+
+services:
+  omada-controller:
+    image: mbentley/omada-controller:latest
+    container_name: omada-controller
+    restart: always
+    network_mode: host
+    environment:
+      - MANAGE_HTTP_PORT=8088
+      - MANAGE_HTTPS_PORT=8043
+      - PORTAL_HTTP_PORT=8088
+      - PORTAL_HTTPS_PORT=8843
+      - SHOW_SERVER_LOGS=true
+      - SHOW_MONGODB_LOGS=false
+      - TZ=America/Chicago
+    # networks: 
+    #   - proxy_net  
+    volumes:   
+      - omada_data:/opt/tplink/EAPController/data
+      - omada_logs:/opt/tplink/EAPController/logs
+      - omada_work:/opt/tplink/EAPController/work
+
+volumes:
+  omada_data:
+    external: true
+  omada_logs:
+    external: true
+  omada_work:
+    external: true
+
+# # --- Network Definitions --- #
+# networks: 
+#   proxy_net: 
+#     external: true
+
+```
+
+Start the controller:
+
+```bash
+docker compose up -d
+
+```
 
 ---
 
-## 2. Initial Setup & Adoption
+## Initial Setup & Adoption
 
-Once your controller is running and connected to the network, follow this workflow:
+Once the controller is running, follow this workflow to bring the network online.
 
-### Step 1: Access the Interface
+### 1. Access the Interface
 
-* **Hardware/Software:** Navigate to the IP address of the controller (usually port `8043` or `8088` depending on setup).
-* **Default Login:** Often `admin` / `admin` (you will be forced to change this immediately).
+* **URL:** `https://<server-ip>:8043`
+* **Note:** You may receive a security warning because the SSL certificate is self-signed. This is normal; proceed past it.
+* **First Login:** The default is often `admin` / `admin`, but the setup wizard will force a password change immediately.
 
-### Step 2: Device Adoption
+### 2. Device Adoption
 
-The controller does not automatically manage devices; you must "Adopt" them.
+The controller does not automatically manage devices plugged into the network; they must be explicitly "Adopted".
 
-1. Go to the **Devices** tab (looks like an Access Point icon).
-2. You will see your devices listed with a status of **"Pending"**.
+1. Go to the **Devices** tab (Access Point icon).
+2. Devices (Gateway, Switches, APs) should be listed as **"Pending"**.
 3. Click the **Adopt** button on the right.
-4. The status will change to **Provisioning**, then **Connected**.
+4. The status will cycle: **Provisioning** -> **Configuring** -> **Connected**.
 
-### Step 3: WAN/LAN Configuration
+### 3. WAN/LAN Configuration
 
-If you are using an Omada Gateway (like the ER605):
+If using an Omada Gateway (like the ER605):
 
 * Navigate to **Settings (Gear icon) > Wired Networks > Internet**.
-* Configure your WAN type (DHCP, PPPoE, or Static).
+* Configure the WAN type provided by the ISP (DHCP, PPPoE, or Static).
 
 ---
 
-## 3. Key Configuration Features
+## Configuration Features
 
 ### Wireless Networks (SSIDs)
 
 * **Location:** Settings > Wireless Networks.
-* **Features:** You can create multiple SSIDs (e.g., Main, IoT, Guest).
-* **Guest Network:** Check the "Guest Network" box to automatically apply isolation rules (preventing guests from accessing your internal LAN).
+* **Usage:** Create multiple SSIDs here (e.g., Main, IoT, Guest).
+* **Guest Network:** Checking the "Guest Network" box automatically applies isolation rules, preventing those clients from accessing the internal LAN.
 
 ### VLANs (Virtual LANs)
 
-To segment traffic (e.g., separating IoT devices from your PC):
+To segment traffic (e.g., separating IoT devices from the main PC):
 
-1. **Create Interface:** Settings > Wired Networks > LAN. Create a new Interface with a VLAN ID (e.g., 20).
-2. **Tag Ports:** Ensure your managed switches utilize the correct profiles to pass this VLAN tag.
+1. **Create Interface:** Settings > Wired Networks > LAN. Create a new Interface with a VLAN ID (e.g., `20`).
+2. **Tag Ports:** Ensure managed switches utilize the correct profiles to pass this VLAN tag to the APs.
 3. **Assign to Wi-Fi:** In Wireless settings, assign an SSID to use that specific VLAN ID.
 
 ### ACLs (Access Control Lists)
 
 * **Location:** Settings > Network Security > ACL.
-* **Usage:** Use "Switch ACLs" or "Gateway ACLs" to block traffic between VLANs (e.g., Block IoT VLAN from accessing Main VLAN).
+* **Usage:** Use "Switch ACLs" or "Gateway ACLs" to block traffic between VLANs (e.g., Block the IoT VLAN from accessing the Main VLAN).
 
 ---
 
-## 4. Maintenance & Best Practices
+## Maintenance
 
-* **Backups:** Go to **Settings > Maintenance > Backup & Restore**. Set up "Auto Backup" to save your config to an SD card (OC200) or local disk periodically.
-* **Roaming:** Enable **Fast Roaming (802.11r)** in Site Settings to help devices switch between APs smoothly, but test it first (some older IoT devices hate this).
-* **AI Optimization:** The "AI WLAN Optimization" tool scans the environment and automatically adjusts channels and transmit power to reduce interference. Run this once after setup.
+* **Backups:** Go to **Settings > Maintenance > Backup & Restore**. Set up "Auto Backup" to save the config locally. Since the `omada_data` volume is mapped, these backups persist on the disk.
+* **Roaming:** Enable **Fast Roaming (802.11r)** in Site Settings to help devices switch between APs smoothly. *Note: Test this first, as some older IoT devices struggle with it.*
+* **AI Optimization:** The "AI WLAN Optimization" tool scans the RF environment and automatically adjusts channels and transmit power to reduce interference. Run this once after the initial deployment.
+
+---
