@@ -30,6 +30,10 @@ sudo apt install mergerfs fuse
 
 ## Branch Setup & Preparation
 
+!!! WARNING Important
+    
+    Never write data directly to the `/mnt/disk1` folders if you can help it. Always write to `/mnt/storage`. If you modify files on the backing disks directly while MergerFS is running, you might see cache inconsistencies until you remount.
+
 Before creating the pool, the underlying mount points (branches) should be organized and secured.
 
 ### 1. Naming Convention
@@ -96,6 +100,17 @@ $ sudo setfattr -n user.mergerfs.branch /mnt/hdd/10T-SERIALNUM
 
 ### 1. Create Pool Directory
 
+!!! info inline end
+
+    For Linux v6.6 and above (defaults - quick start)
+    >-cache.files=off
+
+    >-category.create=pfrd
+
+    >-func.getattr=newest
+
+    >-dropcacheonclose=false
+
 Create the unified mount point where applications will access the data.
 
 ```bash
@@ -106,6 +121,9 @@ sudo mkdir -p /mnt/storage
 ### 2. Command Line Test
 
 Test the pool creation manually before making it persistent.
+
+!!! note
+    These settings are just what I used. Your situation may benefit from different layout. Read the docs to see what would work best. 
 
 ```bash
 mergerfs -o cache.files=off,category.create=mspmfs,func.getattr=newest,dropcacheonclose=false,minfreespace=200G,moveonenospc=true /mnt/disk*/mnt /mnt/storage

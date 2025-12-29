@@ -17,7 +17,7 @@ theme:
     - search.suggest
     - toc.follow
   palette: 
-    # Optional: Switch to dark mode automatically
+    # Optional: Switch to dark mode automatically - this shit doesnt work idk how to fix it 
     - scheme: slate 
       primary: custom
       accent: custom
@@ -45,10 +45,13 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - attr_list
-
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 # Your Topic-Based Structure
 nav:
   - Home: index.md
+  - Overview: overview/overview.md
   - Infrastructure:
     - Getting Started: 
       - PC Setup - App Server: infrastructure/gettingstarted/pcsetup.md
@@ -64,18 +67,22 @@ nav:
       - Git Basics: infrastructure/git/git.md
     - Shell: 
       - Zsh: infrastructure/shell/zsh.md
-  - Services:
-      - Network & Access: 
-        - Pi-hole: services/pihole/pihole.md
-        - Omada: services/omada/omada.md
-        - Tailscale: services/tailscale/tailscale.md
-      - Obsidian LiveSync: services/obslivesync/obslivesync.md
-      - Home Assistant: services/homeassisstant/homeassisstant.md
-      - Cloud Storage: 
-        - Nextcloud: services/nextcloud/nextcloud.md
-        - Immich: services/immich/immich.md
-      - Media Server:
-        - Radarr: services/servarr/radarr.md
-        - Sonarr: services/servarr/sonarr.md
-        - Prowlarr: services/servarr/prowlarr.md
-        - qBittorrent: services/servarr/qbittorrent.md
+  - Networking & Access:
+    - Pi-hole: services/pihole/pihole.md
+    - Omada: services/omada/omada.md
+    - Tailscale: services/tailscale/tailscale.md
+  - Monitoring: 
+    - Beszel: monitoring/beszel.md
+  - Home Assistant: services/homeassisstant/homeassisstant.md
+  - Cloud Services: 
+    - Nextcloud: services/nextcloud/nextcloud.md
+    - Immich: services/immich/immich.md
+  - Media Server:
+    - Radarr: services/servarr/radarr.md
+    - Sonarr: services/servarr/sonarr.md
+    - Prowlarr: services/servarr/prowlarr.md
+    - qBittorrent: services/servarr/qbittorrent.md
+  - Utilities: 
+    - convertx: services/utilities/convertx.md
+    - Obsidian LiveSync: services/utilities/obslivesync.md
+

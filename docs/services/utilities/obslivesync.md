@@ -1,5 +1,8 @@
 # Self-Hosted Obsidian LiveSync with Tailscale
 
+[Github :simple-github:](https://github.com/vrtmrz/obsidian-livesync)
+
+---
 ## Overview
 
 This guide covers setting up a self-hosted synchronization backend for Obsidian using **CouchDB** and **Obsidian LiveSync**. This approach offers full control over data privacy and sync speed by hosting the database directly.
@@ -156,14 +159,10 @@ This passphrase is never shown again, so please note it in a safe place.
 ## Client Setup
 
 !!! danger "CRITICAL WARNING: Customization Sync"
-During setup, the plugin may ask to enable **"Customization Sync"** or "Configuration Sync" (plugins, themes, settings).
-
-
-**DO NOT ENABLE THIS.**
-
-Syncing configuration files between different platforms (e.g., Windows vs. Android) causes boot loops, UI corruption, and file path conflicts. **Decline all pop-ups** related to syncing hidden folders (`.obsidian`). Only sync markdown notes and media. 
-
-When I used this originally it was a **fucking nightmare** to get things syncing correctly, so I'd avoid it. 
+    During setup, the plugin may ask to enable **"Customization Sync"** or "Configuration Sync" (plugins, themes, settings).
+    **DO NOT ENABLE THIS.**
+    Syncing configuration files between different platforms (e.g., Windows vs. Android) causes boot loops, UI corruption, and file path conflicts. **Decline all pop-ups** related to syncing hidden folders (`.obsidian`). Only sync markdown notes and media. 
+    When I used this originally it was a **fucking nightmare** to get things syncing correctly, so I'd avoid it. 
 
 
 ### Network Configuration (Tailscale)

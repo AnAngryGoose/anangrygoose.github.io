@@ -1,6 +1,5 @@
 # Server Setup 
 
-* **Sources:**
 * [Ubuntu Server 24.04 LTS Release Notes](https://ubuntu.com/download/server)
 * [Ubuntu Server Network Configuration](https://documentation.ubuntu.com/server/explanation/networking/configuring-networks/)
 * [OpenSSH Server Documentation](https://documentation.ubuntu.com/server/how-to/security/openssh-server/)
@@ -12,14 +11,12 @@
 Before touching the hardware, the installation media must be prepared on a separate computer.
 
 **A. Download ISO**
-Get the **Ubuntu Server 24.04 LTS** (Long Term Support) ISO. Use whatever OS you want. I just used Ubuntu for this guide.
+Get the **[Ubuntu Server 24.04 LTS]((https://ubuntu.com/download/server))** (Long Term Support) ISO. Use whatever OS you want. I just used Ubuntu for this guide.
 
 * **Note:** Do not use the "Desktop" version for a server. The Server ISO is optimized for performance and headless operation (no monitor).
 
 **B. Flash to USB**
-Use **BalenaEtcher** or **Rufus** to write the ISO to a USB drive (4GB+).
-
-* **Warning:** This process wipes the USB drive completely.
+Use **BalenaEtcher**, **Rufus**, `dd`, or another application to write the ISO to a USB drive (4GB+).
 
 ---
 
@@ -56,11 +53,11 @@ By default, the server asks for a DHCP address. **Set a Static IP now** to avoid
 **C. Storage**
 
 * Select "Use an entire disk".
-* **LVM:** Keep "Set up this disk as an LVM group" checked. This allows for flexible partition resizing later.
+* **LVM:** Keep "Set up this disk as an LVM group" checked. This allows for flexible partition resizing later. Not required, but it can help. Verify compatability with desired filesystem to be used.
 
 **D. Profile & SSH**
 
-* **Identity:** Set your hostname (e.g., `vanth-node-01`) and username.
+* **Identity:** Set your hostname (e.g., `my-node-01`) and username.
 * **SSH Setup:** **Check the box [ ] Install OpenSSH server.**
 * *Do not skip this.* Without it, you cannot connect to the headless server remotely.
 

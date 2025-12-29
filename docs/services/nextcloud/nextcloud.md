@@ -1,5 +1,9 @@
 # Nextcloud Storage
 
+[NextCloud Github :simple-github: ](https://github.com/nextcloud/server) 
+
+[Nextcloud linuxserverio image :simple-docker: ](https://hub.docker.com/r/linuxserver/nextcloud)
+
 ## Overview
 
 **Nextcloud** is a self-hosted, open-source productivity platform that functions as a private alternative to services like Google Drive or Dropbox. It provides file storage, synchronization, and sharing, but can be expanded via "apps" to include contacts, calendars, office suites, and more.
@@ -15,7 +19,7 @@ While the core functionality manages files, the architecture requires a web serv
 While there are multiple ways to install Nextcloud, this guide uses Docker Compose for easier configuration and maintenance.
 
 !!! note "Image Choice"
-    Due to stability reports regarding the official image, this guide uses the **[LinuxServer.io](https://hub.docker.com/r/linuxserver/nextcloud)** image. It is generally more robust for permission handling in homelab environments.
+    I read a lot of people having issues with the official nextcloud docker image so I used the **[LinuxServer.io](https://hub.docker.com/r/linuxserver/nextcloud)** image. It is apparently generally more stable. 
 
 #### Compose Configuration
 

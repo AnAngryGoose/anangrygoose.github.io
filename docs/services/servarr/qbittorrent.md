@@ -1,4 +1,6 @@
-# (qBittorrent - Basic Setup)[https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/]
+# qBittorrent
+
+[TRaSH's Guide :simple-qbittorrent: ](https://trash-guides.info/Downloaders/qBittorrent/Basic-Setup/) - this is copy from here
 
 ---
 

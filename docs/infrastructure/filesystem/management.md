@@ -4,7 +4,7 @@
 
 ## Overview
 
-This guide details the process of identifying, partitioning, formatting, and persistently mounting storage drives in a Linux environment. It specifically addresses configuring a mixed storage setup: an SSD for application data (formatted as `ext4`) and multiple HDDs for mass storage (formatted as `xfs`).
+General idea on managing filesystems. This shows specifically `ext4` and `xfs` as that's what I used, but there are plently of other options. 
 
 ---
 
@@ -53,25 +53,13 @@ Target: `/dev/sda` (Appdata/Cache)
 # 1. Wipe old filesystem signatures
 sudo wipefs -a /dev/sda
 
-# 2. Create Partition Table (GPT) and New Partition
-# Params: n (new), p (primary), 1 (partition #), defaults for sectors, w (write)
-echo -e "n\np\n1\n\n\nw" | sudo fdisk /dev/sda
-
-# OR use parted for GPT specifically (Recommended for drives >2TB)
+# Use parted for GPT specifically (Recommended for drives >2TB)
 sudo parted -s /dev/sda mklabel gpt 
 
 # 3. Format to EXT4
 sudo mkfs.ext4 -L "appdata" /dev/sda1
 
 ```
-
-!!! note "Understanding the fdisk command"
-The `echo -e` command pipes responses directly into `fdisk` to automate the interactive prompts:
-* **`n`**: New partition.
-* **`p`**: Primary partition.
-* **`1`**: Partition number 1.
-* **`\n`**: Accepts defaults for First/Last sectors (Start/End of disk).
-* **`w`**: Writes changes to disk.
 
 #### HDD Setup (XFS)
 

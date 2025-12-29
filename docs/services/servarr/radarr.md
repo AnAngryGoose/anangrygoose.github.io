@@ -1,13 +1,8 @@
----
-tags:
-  - media
-  - plex
-  - radarr
-  - arrstack
-  - nas
----
+#Radarr
+
+[Servarr Wiki :simple-radarr: ](https://wiki.servarr.com/en/radarr/quick-start-guide) - This is just a copy from here
+
 ----
-# Quick Start Guide - [servarr](https://wiki.servarr.com/en/radarr/quick-start-guide)
 
 > This page is still in progress and not complete. Contributions are welcome
 
@@ -15,7 +10,8 @@ tags:
 
 In this guide we will try to explain the basic setup you need to do to get started with Radarr. We're going to skip some options that you may see on the screen. If you want to dive deeper into those, please see the appropriate page in the FAQ and docs for a full explanation.
 
-> Please note that within the screenshots and GUI settings in `orange` are advanced options, so you will need to click `Show Advanced` at the top of the page to make them visible.
+!!! important
+    Please note that within the screenshots and GUI settings in `orange` are advanced options, so you will need to click `Show Advanced` at the top of the page to make them visible.
 
 # Startup
 

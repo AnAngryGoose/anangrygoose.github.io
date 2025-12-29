@@ -1,4 +1,8 @@
-# Sonarr - Quick Start Setup Guide
+# Sonarr
+
+[Servarr Wiki :simple-sonarr: ](https://wiki.servarr.com/sonarr/quick-start-guide) - this is just a copy from here
+
+---
 
 > This page is still in progress and not complete. Contributions are welcome
 
@@ -6,7 +10,8 @@
 
 In this guide we will try to explain the basic setup you need to do to get started with Sonarr. We're going to skip some options that you may see on the screen. If you want to dive deeper into those, please see the appropriate page in the FAQ and docs for a full explanation.
 
-> Please note that within the screenshots and GUI settings in `orange` are advanced options, so you will need to click `Show Advanced` at the top of the page to make them visible.
+!!! important
+    Please note that within the screenshots and GUI settings in `orange` are advanced options, so you will need to click `Show Advanced` at the top of the page to make them visible.
 
 # Startup
 

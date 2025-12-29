@@ -1,5 +1,7 @@
 # SnapRAID Configuration Guide
 
+[SnapRAID Official Docs](https://www.snapraid.it/)
+
 ---
 
 ## Overview
@@ -8,9 +10,13 @@
 
 Unlike traditional RAID 5 or 6, SnapRAID is not real-time; it is a snapshot-based system.
 
-* **Independence:** Data disks function as individual filesystems. If one drive fails, data on the surviving drives remains accessible.
-* **Energy Efficiency:** Drives spin down when not in use. Accessing a file only spins up the specific drive holding that file.
-* **Flexibility:** It can protect disks of different sizes and containing existing data.
+
+* Provide fault tolerance to protect against (inevitable) hard drive failure
+* Checksum files to guard against bitrot
+* Support hard drives of differing / mismatched sizes
+* Enable incremental upgrading of hard drives in batches as small as one
+* Each drive should have a separately readable filesystem with no striping of data
+
 
 ### The Parity Concept
 

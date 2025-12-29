@@ -2,9 +2,10 @@
 
 ## Overview
 
-The **Omada Software Defined Networking (SDN)** platform is TP-Link's centralized management solution. It manages gateways (routers), switches, and access points (APs) from a single interface.
+The **Omada Software Defined Networking (SDN)** platform is TP-Link's centralized management solution. It manages all your TP-Link hardwaer from a single interface.
 
-While hardware controllers (OC200/OC300) exist, this guide covers running the software controller in a Docker container to utilize existing server hardware.
+I have not gotten too into the deeper settings of omada, but this is basics from what I did. 
+
 
 ---
 

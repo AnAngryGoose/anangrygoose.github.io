@@ -12,7 +12,9 @@
 
 ## 2. Core Strategies: Storage & Networking
 
-The homelab utilizes two distinct patterns for volume and network management.
+I use two distinct patterns for volume and network management.
+
+I'm putting volumes first because it was somewhat hard to understand at first and led to a few lost files.
 
 ### 2.1. Volume Management Strategy
 
@@ -215,17 +217,17 @@ volumes:
 
 ## 6. Workflows
 
-### 6.1. Deploying a New Stack (External Volume Method)
-
-This is the recommended, safe workflow for critical services.
+### 6.1. Deploying a New Stack
 
 1. **Create Volumes:** Manually create the volumes first.
 
 ```bash
 docker volume create omada_data
 docker volume create omada_logs
-
 ```
+OR 
+
+`mkdir /docker/project/testfolder1` - for bind mounts (if not already made)
 
 2. **Deploy Stack:**
 
@@ -233,6 +235,9 @@ docker volume create omada_logs
 docker compose up -d
 
 ```
+3. **Check it's running**
+
+`docker ps -a`
 
 ### 6.2. Backing Up a Volume
 

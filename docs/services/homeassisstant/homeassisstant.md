@@ -1,12 +1,21 @@
 # Home Assistant & Zigbee Stack
 
+[Home Assistant Github :simple-github: ](https://github.com/home-assistant)
+
+[Z2MQTT Github :simple-github:](https://github.com/Koenkk/zigbee2mqtt)
+
+[Eclipse Mosquitto Github :simple-github:](https://github.com/eclipse-mosquitto/mosquitto)
+
+---
 ## Overview
 
-This stack integrates **Home Assistant**, **Zigbee2MQTT (Z2M)**, and an **MQTT Broker (Mosquitto)** to create a local, privacy-focused smart home environment.
+This integrates **Home Assistant**, **Zigbee2MQTT (Z2M)**, and an **MQTT Broker (Mosquitto)** to create a local smarthome. 
 
 I am specifically configuring this for the **Sonoff ZBDongle-MG24** (Model "E" or "MG24"), which runs on the Silicon Labs EFR32MG24 chip. This requires the specific `ember` driver in Zigbee2MQTT, unlike the older Texas Instruments-based dongles.
 
 The stack runs via Docker Compose, with Home Assistant running in `host` networking mode for optimal device discovery.
+
+I'm a big fan of the zigbee system as each device acts as a repeater for the other devices. Also, working of seperate protocol, your devices will continue working even without WiFi.
 
 ---
 
@@ -17,7 +26,7 @@ The stack runs via Docker Compose, with Home Assistant running in `host` network
 **Identify the Dongle**
 The Sonoff MG24 uses a different driver protocol than older models. Before configuring software, ensure the dongle is recognized.
 
-1. Plug the dongle into a USB 2.0 port (or use a USB 2.0 extension cable to avoid USB 3.0 interference).
+1. Plug the dongle into a USB 2.0 port **(or use a USB 2.0 extension cable to avoid USB 3.0 interference).**
 2. Run the following to identify your specific device ID:
 ```bash
 ls -l /dev/serial/by-id/

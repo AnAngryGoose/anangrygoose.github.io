@@ -8,6 +8,8 @@
 
 This guide covers the initialization of a local repository, security practices for managing secrets, and daily workflows using both the Command Line Interface (CLI) and VS Code.
 
+I don't know much about the other stuff in git. I just use the basics, but this gets me by. 
+
 ---
 
 ## 1. Initialization (One-Time Setup)
