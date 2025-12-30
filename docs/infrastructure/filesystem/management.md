@@ -103,7 +103,7 @@ For a visual interface, use `cfdisk`.
 
 ### Get UUIDs
 
-Use UUIDs (Universally Unique Identifiers) for mounting. Unlike `/dev/sdX` names, UUIDs do not change if drive order changes.
+Use UUIDs for mounting. Unlike `/dev/sdX` names, UUIDs do not change if drive order changes. You'll need to map them using these or they may not show on reboot
 
 ```bash
 ls -l /dev/disk/by-uuid/
@@ -112,7 +112,7 @@ ls -l /dev/disk/by-uuid/
 
 **Output:**
 
-```text
+```bash
 lrwxrwxrwx 1 root root 10 Dec  7 05:34 02de315f-8ced-4745-bb4f-2d24c46efa48 -> ../../sdb1
 lrwxrwxrwx 1 root root 15 Dec  7 04:33 3c26dce0-7f10-426c-bd67-e9f2d77889ee -> ../../nvme0n1p2
 lrwxrwxrwx 1 root root 10 Dec  7 05:34 603999da-c2dd-484d-80bf-ab4977680e90 -> ../../sdc1

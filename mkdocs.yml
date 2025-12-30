@@ -21,9 +21,9 @@ theme:
     - scheme: slate 
       primary: custom
       accent: custom
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
+      # toggle:
+      #   icon: material/brightness-4
+      #   name: Switch to light mode
 extra_css:
   - stylesheets/gruvbox.css
 extra_javascript:
@@ -37,6 +37,7 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
+  
   - admonition
   - pymdownx.details  # (Optional) Enables collapsible "???" blocks
   # "SuperFences" allows for nesting code blocks in lists, etc.
