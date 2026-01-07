@@ -53,23 +53,40 @@ Install hub and local agent. The hub is central monitoring for multiple machines
     image: henrygd/beszel-agent # https://github.com/henrygd/beszel
     container_name: beszel-agent
     restart: unless-stopped
-    network_mode: "host"  # CRITICAL: Must be on host to read actual CPU/Disk/Network
+    network_mode: "host"  #  Must be on host to read actual CPU/Disk/Network
+
+    # GPU monitoring 
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - utility  
+                
+    devices:
+      - /dev/nvme0:/dev/nvme0 # Root Drive
+      - /dev/sda:/dev/sda # Appdata Drive
+      - /dev/sdb:/dev/sdb # Parity Drive  
+      - /dev/sdc:/dev/sdc # Data Drive 1 
+      - /dev/sdd:/dev/sdd # Data Drive 2 
+    cap_add:
+      - SYS_RAWIO # required for S.M.A.R.T. data
+      - SYS_ADMIN # required for NVMe S.M.A.R.T. data
+    
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro # To monitor other docker containers
-      - /dev/dri:/dev/dri # For GPU monitoring 
-      - /:/mnt/root_drive:ro
+      - ./beszel_agent_data:/var/lib/beszel-agent
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+      #  Map disk mounts for stroage info. For disk I/O info: /extra-filesystems/sdX = sdX must match disk from `cat /proc/diskstats`  -- double underscores adds the customs names. 
+      - /mnt/hdd/WD-12345:/extra-filesystems/sdc__data_disk_1:ro 
+      - /mnt/hdd/WD-67890/extra-filesystems/sdd__data_disk_2:ro 
     environment:
       - PORT=45876
       - KEY=${BESZEL_KEY} 
       - EXTRA_FILESYSTEMS=/mnt/root_drive
   ```
-
-## Screenshots
-
-![Dashboard](https://beszel.dev/image/dashboard.png)
-![System page](https://beszel.dev/image/system-full.png)
-![Notification Settings](https://beszel.dev/image/settings-notifications.png)
-
 ## Supported metrics
 
 - **CPU usage** - Host system and Docker / Podman containers.
