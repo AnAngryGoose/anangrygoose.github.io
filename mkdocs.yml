@@ -75,6 +75,7 @@ nav:
   - Networking & Access:
     - OPNsense: 
       - Overview: networking/opnsense/opnsense.md
+      - VLAN Configuration: networking/vlan/vlan.md
       - Adguard Home on OPNSense: networking/opnsense/opnsenseadguard.md
       - Tailscale as Subnet Router: networking/opnsense/opnsensetailscale.md
     - NGINX Proxy Manager: 
