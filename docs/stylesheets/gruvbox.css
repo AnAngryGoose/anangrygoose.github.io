@@ -87,8 +87,8 @@ body, html {
   /* Main Body Text: Gruvbox Light1 */
   --md-default-fg-color: #ebdbb2; 
   
-  /* Muted Text / Meta Data: Gruvbox Gray */
-  --md-default-fg-color--light: #a89984; 
+  /* Muted Text, Nav Headers, Meta Data: Gruvbox Light0 */
+  --md-default-fg-color--light: #98971a; 
   
   /* Faint Text / Placeholders: Gruvbox Dark4 */
   --md-default-fg-color--lighter: #7c6f64; 
@@ -179,6 +179,15 @@ a:link:hover, a:visited:hover {
 /* Gruvbox Orange (Bright) for active clicks */
 a:link:active, a:visited:active {
   color: #fe8019;
+}
+
+/* Set all subheaders and BOLD text color */
+[data-md-color-scheme="slate"] {
+  /* variables go in here*/
+}
+
+[data-md-color-scheme="slate"] strong, [data-md-color-scheme="slate"] .md-nav__title, [data-md-color-scheme="slate"] h2, [data-md-color-scheme="slate"] h3, [data-md-color-scheme="slate"] h4 {
+  color: #98971a; /* Gruvbox Light0 */
 }
 
 /* Mobile/Tablet Navigation Title Bar */
