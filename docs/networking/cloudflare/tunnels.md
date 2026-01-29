@@ -3,7 +3,7 @@
 [Cloudflare docs :simple-cloudflare:](https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/)
 
 ---
-This covers creating a cloudflare tunnel in docker, serving a container with it, and securing it using an access policy. 
+This covers creating a cloudflare tunnel in docker, serving a container with it, and securing it using an access policy. This is assuming you already have a domain and CNAME DNS record setup with cloudflare. 
 
 ## Creating A Tunnel 
 
