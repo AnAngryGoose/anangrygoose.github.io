@@ -7,6 +7,8 @@ This covers creating a cloudflare tunnel in docker, serving a container with it,
 
 ## Creating A Tunnel 
 
+---
+
 First, you need to generate a tunnel and get its Tunnel Token.
 
 1. Login to the [Cloudflare Zero Trust Dashboard](https://one.dash.cloudflare.com/)
@@ -20,6 +22,8 @@ First, you need to generate a tunnel and get its Tunnel Token.
 5. Copy the Token from the provided command (it's the long string after --token).
 
 ## Deploy the Connector 
+
+---
 
 There are multiple ways to deploy a tunnel. This is using a docker `compose.yaml` file. This allows you to easily manage the container as well as the tunnel together or seperately. 
 
@@ -52,6 +56,8 @@ NOTE: **The `cloudflared` container must be on the same Docker network as the se
 
 ## Route Traffic (Public Hostname)
 
+---
+
 Now that the connector is running, tell Cloudflare where to send the traffic:
 
 1. Back in the Cloudflare Dashboard, go to the Public Hostname tab for your tunnel.
@@ -71,6 +77,8 @@ Now that the connector is running, tell Cloudflare where to send the traffic:
 4. Save the configuration.
 
 ## Secure Tunnel
+
+---
 
 Using an access policy, you can secure the initial access to the tunnel. Multiple options are available including email, Indent providers (github, google, etc) and more. Im using an email for simplicity here. 
 
