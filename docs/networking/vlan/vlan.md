@@ -138,7 +138,9 @@ Go to each new interface - **[MANAGMENT], [TRSUTED]. etc.**
 
     * ETC.
 
-### DNS 
+### DNS  
+
+For client configuration see: [Client DHCP and DNS configuration](../vlandhcp)
 
 **1.** Go to **Services > Unbound DNS > General** 
 

@@ -3,8 +3,11 @@ site_name: Homelab
 
 theme:
   name: material
+  plugins:
+  - typeset
   features:
     - navigation.top
+    - navigation.instant
     - navigation.tracking
     - navigation.tabs        # Top-level tabs
     - navigation.sections    # Sidebar grouping
@@ -77,6 +80,7 @@ nav:
     - OPNsense: 
       - Overview: networking/opnsense/opnsense.md
       - VLAN Configuration: networking/vlan/vlan.md
+      - DHCPv4 with DNS registration: networking/vlan/vlandhcp.md
       - Adguard Home on OPNSense: networking/opnsense/opnsenseadguard.md
       - Tailscale as Subnet Router: networking/opnsense/opnsensetailscale.md
     - NGINX Proxy Manager: 
