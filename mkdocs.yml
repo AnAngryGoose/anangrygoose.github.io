@@ -118,6 +118,8 @@ nav:
     - qBittorrent: services/servarr/qbittorrent.md
     - Gluetun VPN: services/servarr/gluetun.md
 
+  - Ollama:
+    - Ollama: ollama/ollama.md
 
   - Utilities: 
    #- BentoPDF: services/utilities/bentopdf.md
