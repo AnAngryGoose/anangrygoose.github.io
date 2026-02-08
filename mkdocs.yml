@@ -3,11 +3,19 @@ site_name: Homelab
 
 theme:
   name: material
+  favicon: material/server
   plugins:
   - typeset
+  font: 
+    text: Inter
+    code: Fira Mono
+  icon:
+    logo: material/server
   features:
+    - toc.integrate
     - navigation.top
     - navigation.instant
+    - navigation.instant.prefetch
     - navigation.tracking
     - navigation.tabs        # Top-level tabs
     - navigation.sections    # Sidebar grouping
@@ -33,6 +41,11 @@ extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
 
+
+
+
+
+
 ### --- Markdown Extensions --- ###   
 markdown_extensions:
   # Python Markdown's standard code highlighter
@@ -52,16 +65,28 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
-# Your Topic-Based Structure
+
+
+
+
+
 nav:
   - Home: index.md
-  - Overview: overview/overview.md
 
+  - Overview: overview/overview.md
 
   - Infrastructure:
     - Getting Started: 
       - PC Setup - App Server: infrastructure/gettingstarted/pcsetup.md
       - PC Setup - NAS: infrastructure/gettingstarted/nassetup.md
+    - Ansible: 
+      - Getting Started: infrastructure/ansible/ansiblegetstarted.md
+      - Installation: infrastructure/ansible/ansibleinstallation.md
+      - Inventory & Commands: infrastructure/ansible/ansibleinventory.md
+      - Elevated Commands: infrastructure/ansible/ansiblecommands.md
+      - Playbooks: infrastructure/ansible/ansibleplaybook.md
+    - Proxmox:
+      - Overview: infrastructure/proxmox/proxmox.md
     - Filesystem & Storage: 
       - Management: infrastructure/filesystem/management.md
       - SnapRAID: infrastructure/filesystem/snapraid.md
@@ -69,6 +94,7 @@ nav:
     - Docker: 
       - Overview: infrastructure/docker/docker.md
       - Installing Docker on Debian: infrastructure/docker/dockerinstall.md
+      - Post-Installation: infrastructure/docker/dockerpostinstall.md
       - Cheat Sheet: infrastructure/docker/cheatsheet.md
     - git:
       - Git Basics: infrastructure/git/git.md
