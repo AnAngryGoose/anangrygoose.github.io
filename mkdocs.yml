@@ -79,6 +79,8 @@ nav:
     - Getting Started: 
       - PC Setup - App Server: infrastructure/gettingstarted/pcsetup.md
       - PC Setup - NAS: infrastructure/gettingstarted/nassetup.md
+    - Backups:
+      - Backrest: infrastructure/backups/backrest.md
     - Ansible: 
       - Getting Started: infrastructure/ansible/ansiblegetstarted.md
       - Installation: infrastructure/ansible/ansibleinstallation.md

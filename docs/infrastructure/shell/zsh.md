@@ -39,7 +39,8 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-
 
 ```
 
-**B. Configure `.zshrc**`
+**B. Configure `.zshrc`**
+
 Open the configuration file:
 `nano ~/.zshrc`
 
