@@ -44,19 +44,14 @@
   --h5-color:             #fbf1c7; 
   --h6-color:             #fbf1c7;  */
 
-
   /* Uncomment this block to make each header level a different color
     /* --- INDIVIDUAL HEADING COLORS (colorful option) --- */
-
   --h1-color:             var(--color-red);
   --h2-color:             var(--color-orange); 
   --h3-color:             var(--color-yellow); 
   --h4-color:             var(--color-green);  
   --h5-color:             var(--color-blue); 
   --h6-color:             var(--color-purple);  
-  
-
-
 
   /* --- ACCENTS & BRANDING --- */
   /* Primary Action (Buttons, Progress bars) - Gruvbox Orange */
@@ -70,9 +65,6 @@
   /* Nav title color*/
   --theme-nav-title:     var(--color-red);
 
-
-
-
   /* --- STATUS COLORS (Admonitions/Alerts) --- */
   --status-info:          #83a598; /* Blue */
   --status-success:       #b8bb26; /* Green */
@@ -80,17 +72,11 @@
   --status-danger:        #fb4934; /* Red */
   --status-special:       #d3869b; /* Purple */
 
-
-
-
   /* --- HERO SECTION --- */
   --hero-bg-image:        url('../assets/landing-bg-gruvbox.png');
   /* RGB values required for the overlay opacity (Matches theme-bg-base #1d2021) */
   --hero-overlay-rgb:     29, 32, 33; 
   --hero-overlay-alpha:   0.85;
-
-
-
 
   /* --- CODE SYNTAX HIGHLIGHTING --- */
   --code-keyword:         #fb4934; /* Red */
