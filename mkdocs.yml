@@ -6,15 +6,18 @@ theme:
   favicon: material/server
   plugins:
   - typeset
+  - optimize
   font: 
     text: Inter
     code: Fira Mono
   icon:
     logo: material/server
   features:
-    - toc.integrate
+    # - toc.follow
+    # - toc.integrate
     - navigation.top
     - navigation.instant
+    - navigation.expand
     - navigation.instant.prefetch
     - navigation.tracking
     - navigation.tabs        # Top-level tabs
@@ -26,7 +29,6 @@ theme:
     - search.highlight
     - search.share
     - search.suggest
-    - toc.follow
   palette: 
     # Optional: Switch to dark mode automatically - this shit doesnt work idk how to fix it 
     - scheme: slate 
@@ -53,7 +55,8 @@ markdown_extensions:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-  
+  - toc:
+      permalink: true
   - admonition
   - pymdownx.details  # (Optional) Enables collapsible "???" blocks
   # "SuperFences" allows for nesting code blocks in lists, etc.
