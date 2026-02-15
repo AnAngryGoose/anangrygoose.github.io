@@ -36,7 +36,7 @@ theme:
       #   icon: material/brightness-4
       #   name: Switch to light mode
 extra_css:
-  - stylesheets/gruvbox.css
+  - stylesheets/gruvbox-dark.css
 extra_javascript:
   - javascripts/mathjax.js
   - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js

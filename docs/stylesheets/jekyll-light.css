@@ -1,0 +1,292 @@
+/* ==========================================================================
+   SECTION 1: THEME CONFIGURATION (The Control Panel)
+   Change these Hex codes to completely reskin your website.
+   Current Preset: Jekyll White (Classic Minima/GitHub Light)
+   ========================================================================== */
+:root {
+  /* --- BASE PALETTE (Utility) --- */
+  /* Defined for future overrides */
+  --color-black:          #111111;
+  --color-white:          #ffffff;
+  --color-red:            #d00000; /* Classic Jekyll Red */
+  --color-orange:         #cf5c00;
+  --color-yellow:         #e3bf21;
+  --color-green:          #22863a;
+  --color-blue:           #0366d6; /* Standard Web Blue */
+  --color-purple:         #6f42c1;
+  --color-grey:           #6a737d;
+
+  /* --- BACKGROUNDS --- */
+  /* The deepest background (Body, Footer) */
+  --theme-bg-base:        #ffffff; 
+  /* Slightly darker background (Cards, Sidebar, Header) */
+  --theme-bg-surface:     #f6f8fa; 
+  /* Highlighted background (Active inputs, Code blocks) */
+  --theme-bg-highlight:   #f0f3f6; 
+  /* Borders and Dividers */
+  --theme-border:         #e1e4e8; 
+
+  /* --- TYPOGRAPHY --- */
+  /* Main body text (High Contrast) */
+  --theme-text-main:      #24292e; 
+  /* General Bold text (Strong) */
+  --theme-text-bold:      #111111; 
+  /* Subtitles, Nav items, lighter text */
+  --theme-text-muted:     #586069; 
+  /* Comments, placeholders */
+  --theme-text-dim:       #6a737d; 
+
+  /* --- INDIVIDUAL HEADING COLORS --- */
+  /* Edit these to make specific header levels different colors */
+  --h1-color:             #111111; 
+  --h2-color:             #111111; 
+  --h3-color:             #111111; 
+  --h4-color:             #111111; 
+  --h5-color:             #111111;
+  --h6-color:             #111111;
+
+    /* --- INDIVIDUAL HEADING COLORS (colorful option) --- */
+/* Uncomment this block to make each header level a different color
+  --h1-color:             var(--color-red);; 
+  --h2-color:             var(--color-orange); 
+  --h3-color:             var(--color-yellow); 
+  --h4-color:             var(--color-green);  
+  --h5-color:             var(--color-blue); 
+  --h6-color:             var(--color-purple);  
+  */
+
+  /* --- ACCENTS & BRANDING --- */
+  /* Primary Action (Buttons, Progress bars) - Jekyll Red */
+  --theme-accent-main:    #d00000; 
+  /* Secondary Action (Hover states, Toggles) - Darker Red */
+  --theme-accent-hover:   #9e0000; 
+  /* Links and Clickables - Classic Web Blue */
+  --theme-link:           #0366d6; 
+  /* Active/Selected Links - Jekyll Red */
+  --theme-link-active:    #d00000; 
+
+  /* --- STATUS COLORS (Admonitions/Alerts) --- */
+  --status-info:          #0366d6; /* Blue */
+  --status-success:       #22863a; /* Green */
+  --status-warning:       #e3bf21; /* Yellow */
+  --status-danger:        #d73a49; /* Red */
+  --status-special:       #6f42c1; /* Purple */
+
+  /* --- HERO SECTION --- */
+  --hero-bg-image:        url('../assets/landing-bg-light.png');
+  /* RGB values required for the overlay opacity (Matches theme-bg-base #ffffff) */
+  --hero-overlay-rgb:     255, 255, 255; 
+  --hero-overlay-alpha:   0.85;
+
+  /* --- CODE SYNTAX HIGHLIGHTING --- */
+  /* GitHub Light Style */
+  --code-keyword:         #d73a49; /* Red */
+  --code-function:        #6f42c1; /* Purple */
+  --code-string:          #032f62; /* Dark Blue */
+  --code-number:          #005cc5; /* Blue */
+  --code-comment:         #6a737d; /* Grey */
+  --code-class:           #6f42c1; /* Purple */
+  --code-variable:        #e36209; /* Orange */
+}
+
+
+/* ==========================================================================
+   SECTION 2: MATERIAL MKDOCS INTERNALS
+   This maps your generic variables above to the specific
+   internal variables used by the Material theme.
+   ========================================================================== */
+/* We use the 'slate' selector to override the dark mode switch, 
+   effectively forcing a Light theme even if the toggle is clicked */
+[data-md-color-scheme="slate"] {
+
+  /* --- 2.1 GLOBAL COLOR MAPPING --- */
+  --md-default-bg-color:              var(--theme-bg-base);
+  --md-default-bg-color--light:       var(--theme-bg-surface);
+  --md-default-bg-color--lighter:     var(--theme-bg-highlight);
+  --md-default-bg-color--lightest:    var(--theme-bg-surface);
+
+  --md-default-fg-color:              var(--theme-text-main);
+  --md-default-fg-color--light:       var(--theme-text-muted);
+  --md-default-fg-color--lighter:     var(--theme-text-dim);
+  --md-default-fg-color--lightest:    var(--theme-border);
+
+  /* --- 2.2 LINKS --- */
+  --md-typeset-a-color:               var(--theme-link);
+
+  /* --- 2.3 HEADER & NAVIGATION --- */
+  /* Background of the top header bar - White for clean look */
+  --md-primary-fg-color:              var(--theme-bg-base);
+  /* Text color in the top header bar */
+  --md-primary-fg-color--light:       var(--theme-text-bold);
+  /* Mobile drawer background */
+  --md-primary-fg-color--dark:        var(--theme-bg-surface); 
+  --md-primary-bg-color:              var(--theme-text-main);
+
+  /* --- 2.4 ACCENTS (Buttons, Tabs, Loading Bar) --- */
+  --md-accent-fg-color:               var(--theme-accent-main);
+  --md-accent-fg-color--transparent:  rgba(208, 0, 0, 0.1); /* Matches accent-main (Red) */
+  --md-accent-bg-color:               var(--theme-bg-surface);
+
+  /* --- 2.5 FOOTER --- */
+  --md-footer-bg-color:               var(--theme-bg-surface);
+  --md-footer-bg-color--dark:         var(--theme-bg-base);
+
+  /* --- 2.6 INPUTS & SEARCH --- */
+  --md-inputs-bg-color:               var(--theme-bg-highlight);
+  --md-inputs-fg-color:               var(--theme-text-main);
+  
+  /* --- 2.7 TABLES --- */
+  --md-typeset-table-color:           rgba(0, 0, 0, 0.05);
+
+  /* --- 2.8 ADMONITIONS (Alert Boxes) --- */
+  --md-admonition-bg-color:           var(--theme-bg-surface);
+  --md-admonition-fg-color:           var(--theme-text-main);
+}
+
+
+/* ==========================================================================
+   SECTION 3: COMPONENT OVERRIDES
+   Fine-tuning specific UI elements to ensure they look perfect.
+   ========================================================================== */
+
+/* --- 3.1 TYPOGRAPHY ENHANCEMENTS --- */
+
+/* Generic Bold Text & Nav Titles */
+[data-md-color-scheme="slate"] strong,
+[data-md-color-scheme="slate"] .md-nav__title {
+  color: var(--theme-text-bold);
+}
+
+/* Individual Headings Configuration */
+[data-md-color-scheme="slate"] h1 {
+  color: var(--h1-color);
+  font-weight: 800;
+}
+[data-md-color-scheme="slate"] h2 {
+  color: var(--h2-color);
+  font-weight: 700;
+}
+[data-md-color-scheme="slate"] h3 {
+  color: var(--h3-color);
+  font-weight: 600;
+}
+[data-md-color-scheme="slate"] h4 {
+  color: var(--h4-color);
+  font-weight: 600;
+}
+[data-md-color-scheme="slate"] h5 {
+  color: var(--h5-color);
+  font-weight: 600;
+}
+[data-md-color-scheme="slate"] h6 {
+  color: var(--h6-color);
+  font-weight: 600;
+}
+
+/* Link Hover Animation */
+.md-typeset a {
+  transition: color 0.2s ease;
+}
+.md-typeset a:hover {
+  color: var(--theme-accent-hover);
+}
+
+/* --- 3.2 CODE BLOCKS --- */
+/* Custom syntax highlighting mapping */
+[data-md-color-scheme="slate"] {
+  --md-code-bg-color:             var(--theme-bg-surface); 
+  --md-code-fg-color:             var(--theme-text-main);
+  
+  --md-code-hl-color:             var(--theme-border);
+  --md-code-hl-keyword-color:     var(--code-keyword);
+  --md-code-hl-function-color:    var(--code-function);
+  --md-code-hl-string-color:      var(--code-string);
+  --md-code-hl-number-color:      var(--code-number);
+  --md-code-hl-special-color:     var(--status-special);
+  --md-code-hl-comment-color:     var(--code-comment);
+  --md-code-hl-variable-color:    var(--code-variable);
+  --md-code-hl-name-color:        var(--code-class);
+  --md-code-hl-operator-color:    var(--theme-text-main);
+  --md-code-hl-punctuation-color: var(--theme-text-muted);
+}
+
+/* --- 3.3 ADMONITION BORDERS --- */
+[data-md-color-scheme="slate"] .md-typeset .admonition {
+  border-width: 0 0 0 .4rem;
+}
+[data-md-color-scheme="slate"] .md-typeset .admonition.note,
+[data-md-color-scheme="slate"] .md-typeset .admonition.info {
+  border-color: var(--status-info);
+}
+[data-md-color-scheme="slate"] .md-typeset .admonition.success,
+[data-md-color-scheme="slate"] .md-typeset .admonition.tip {
+  border-color: var(--status-success);
+}
+[data-md-color-scheme="slate"] .md-typeset .admonition.warning {
+  border-color: var(--status-warning);
+}
+[data-md-color-scheme="slate"] .md-typeset .admonition.failure,
+[data-md-color-scheme="slate"] .md-typeset .admonition.danger {
+  border-color: var(--status-danger);
+}
+
+
+/* ==========================================================================
+   SECTION 4: HERO SECTION (Landing Page)
+   Layout for the full-width splash screen.
+   ========================================================================== */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; 
+}
+
+.hero-container {
+  /* Layout Strategy: Breakout (Full Width) */
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  
+  /* Flexbox Alignment */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; 
+  align-items: flex-start;
+  
+  /* Spacing */
+  padding: 4rem; 
+  min-height: 100vh;
+  margin-top: -5rem;    /* Pull up behind header */
+  margin-bottom: -5rem; /* Pull down content */
+  box-sizing: border-box; 
+  
+  /* Visuals: Gradient Overlay + Image */
+  background: linear-gradient(
+    rgba(var(--hero-overlay-rgb), var(--hero-overlay-alpha)), 
+    rgba(var(--hero-overlay-rgb), var(--hero-overlay-alpha))
+  ), var(--hero-bg-image);
+  
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.hero-container h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--h1-color); 
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(255,255,255,0.7); /* Light shadow for light theme */
+}
+
+.hero-container p {
+  font-size: 1.4rem;
+  color: var(--theme-text-main);
+  max-width: 600px;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  text-shadow: 1px 1px 2px rgba(255,255,255,0.7);
+}
