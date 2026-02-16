@@ -84,6 +84,7 @@ nav:
       - PC Setup - NAS: infrastructure/gettingstarted/nassetup.md
     - Backups:
       - Backrest: infrastructure/backups/backrest.md
+      - SSH with Docker compose: infrastructure/backups/backrestssh.md
     - Ansible: 
       - Getting Started: infrastructure/ansible/ansiblegetstarted.md
       - Installation: infrastructure/ansible/ansibleinstallation.md
