@@ -1,0 +1,328 @@
+/* ==========================================================================
+   SECTION 1: LIGHT MODE DEFINITION (Gruvbox Light)
+   Target: [data-md-color-scheme="default"]
+   ========================================================================== */
+[data-md-color-scheme="default"] {
+  /* --- BASE PALETTE (Light) --- */
+  --color-black:          #282828;
+  --color-white:          #f9f5d7;
+  --color-red:            #cc241d;
+  --color-orange:         #d65d0e;
+  --color-yellow:         #d79921;
+  --color-green:          #98971a;
+  --color-blue:           #458588;
+  --color-purple:         #b16286;
+  --color-aqua:           #689d6a;
+
+  /* --- BACKGROUNDS (Light) --- */
+  --theme-bg-base:        #f9f5d7; 
+  --theme-bg-surface:     #f2e5bc; 
+  --theme-bg-highlight:   #ebdbb2; 
+  --theme-border:         #bdae93; 
+
+  /* --- TYPOGRAPHY (Light) --- */
+  --theme-text-main:      #3c3836; 
+  --theme-text-bold:      #282828; 
+  --theme-text-muted:     #504945; 
+  --theme-text-dim:       #928374; 
+
+  /* --- HEADING COLORS (Light) --- */
+  --h1-color:             var(--color-red);
+  --h2-color:             var(--color-orange); 
+  --h3-color:             var(--color-yellow); 
+  --h4-color:             var(--color-green);  
+  --h5-color:             var(--color-blue); 
+  --h6-color:             var(--color-purple);  
+
+  /* --- ACCENTS (Light) --- */
+  --theme-accent-main:    #d65d0e; 
+  --theme-accent-hover:   #d79921; 
+  --theme-link:           #458588; 
+  --theme-link-active:    #d65d0e; 
+  --theme-nav-title:      var(--color-red);
+
+  /* --- STATUS COLORS (Light) --- */
+  --status-info:          #458588;
+  --status-success:       #98971a;
+  --status-warning:       #d79921;
+  --status-danger:        #cc241d;
+  --status-special:       #b16286;
+
+  /* --- HERO SPECIFICS (Light) --- */
+  --hero-bg-image:        url('../assets/landing-bg-light.png');
+  --hero-overlay-rgb:     249, 245, 215; 
+  --hero-overlay-alpha:   0.85;
+  --hero-text-shadow:     2px 2px 4px rgba(255,255,255,0.5); /* Light shadow */
+
+  /* --- SYNTAX HIGHLIGHTING (Light) --- */
+  --code-keyword:         #cc241d;
+  --code-function:        #d79921;
+  --code-string:          #98971a;
+  --code-number:          #b16286;
+  --code-comment:         #928374;
+  --code-class:           #689d6a;
+  --code-variable:        #458588;
+
+  /* --- MATERIAL INTERNAL MAPPINGS (Light) --- */
+  --md-default-bg-color:              var(--theme-bg-base);
+  --md-default-bg-color--light:       var(--theme-bg-surface);
+  --md-default-bg-color--lighter:     var(--theme-bg-highlight);
+  --md-default-bg-color--lightest:    var(--theme-bg-surface);
+
+  --md-default-fg-color:              var(--theme-text-main);
+  --md-default-fg-color--light:       var(--theme-text-muted);
+  --md-default-fg-color--lighter:     var(--theme-text-dim);
+  --md-default-fg-color--lightest:    var(--theme-border);
+
+  --md-typeset-a-color:               var(--theme-link);
+
+  --md-primary-fg-color:              var(--theme-bg-surface);
+  --md-primary-fg-color--light:       var(--theme-text-bold);
+  --md-primary-fg-color--dark:        var(--theme-bg-base); 
+  --md-primary-bg-color:              var(--theme-text-main);
+
+  --md-accent-fg-color:               var(--theme-accent-main);
+  --md-accent-fg-color--transparent:  rgba(214, 93, 14, 0.1);
+  --md-accent-bg-color:               var(--theme-bg-surface);
+
+  --md-footer-bg-color:               var(--theme-bg-base);
+  --md-footer-bg-color--dark:         var(--theme-bg-base);
+
+  --md-inputs-bg-color:               var(--theme-bg-highlight);
+  --md-inputs-fg-color:               var(--theme-text-main);
+  
+  --md-typeset-table-color:           rgba(60, 56, 54, 0.05);
+  
+  --md-admonition-bg-color:           var(--theme-bg-surface);
+  --md-admonition-fg-color:           var(--theme-text-main);
+
+  /* Code Block Logic for Light Mode */
+  --md-code-bg-color:             var(--theme-bg-highlight);
+  --md-code-fg-color:             var(--theme-text-main);
+  --md-code-hl-color:             var(--theme-border);
+}
+
+/* ==========================================================================
+   SECTION 2: DARK MODE DEFINITION (Gruvbox Dark)
+   Target: [data-md-color-scheme="slate"]
+   ========================================================================== */
+[data-md-color-scheme="slate"] {
+  /* --- BASE PALETTE (Dark) --- */
+  --color-white:          #fbf1c7;
+  --color-black:          #1d2021;
+  --color-red:            #fb4934;
+  --color-orange:         #fe8019;
+  --color-yellow:         #fabd2f;
+  --color-green:          #b8bb26;
+  --color-blue:           #83a598;
+  --color-purple:         #d3869b;
+
+  /* --- BACKGROUNDS (Dark) --- */
+  --theme-bg-base:        #1d2021; 
+  --theme-bg-surface:     #282828; 
+  --theme-bg-highlight:   #3c3836; 
+  --theme-border:         #504945; 
+
+  /* --- TYPOGRAPHY (Dark) --- */
+  --theme-text-main:      #ebdbb2; 
+  --theme-text-bold:      #fbf1c7; 
+  --theme-text-muted:     #d5c4a1; 
+  --theme-text-dim:       #928374; 
+
+  /* --- HEADING COLORS (Dark) --- */
+  --h1-color:             #844848;
+  --h2-color:             var(--color-orange); 
+  --h3-color:             var(--color-yellow); 
+  --h4-color:             var(--color-green);  
+  --h5-color:             var(--color-blue); 
+  --h6-color:             var(--color-purple);  
+
+  /* --- ACCENTS (Dark) --- */
+  --theme-accent-main:    #fe8019; 
+  --theme-accent-hover:   #fabd2f; 
+  --theme-link:           #83a598; 
+  --theme-link-active:    #fe8019; 
+  --theme-nav-title:      var(--color-red);
+
+  /* --- STATUS COLORS (Dark) --- */
+  --status-info:          #83a598;
+  --status-success:       #b8bb26;
+  --status-warning:       #fabd2f;
+  --status-danger:        #fb4934;
+  --status-special:       #d3869b;
+
+  /* --- HERO SPECIFICS (Dark) --- */
+  --hero-bg-image:        url('../assets/landing-bg-gruvbox.png');
+  --hero-overlay-rgb:     29, 32, 33; 
+  --hero-overlay-alpha:   0.85;
+  --hero-text-shadow:     2px 2px 4px rgba(0,0,0,0.8); /* Dark shadow */
+
+  /* --- SYNTAX HIGHLIGHTING (Dark) --- */
+  --code-keyword:         #fb4934;
+  --code-function:        #fabd2f;
+  --code-string:          #b8bb26;
+  --code-number:          #d3869b;
+  --code-comment:         #928374;
+  --code-class:           #8ec07c;
+  --code-variable:        #83a598;
+
+  /* --- MATERIAL INTERNAL MAPPINGS (Dark) --- */
+  --md-default-bg-color:              var(--theme-bg-base);
+  --md-default-bg-color--light:       var(--theme-bg-surface);
+  --md-default-bg-color--lighter:     var(--theme-bg-highlight);
+  --md-default-bg-color--lightest:    var(--theme-bg-surface);
+
+  --md-default-fg-color:              var(--theme-text-main);
+  --md-default-fg-color--light:       var(--theme-text-muted);
+  --md-default-fg-color--lighter:     var(--theme-text-dim);
+  --md-default-fg-color--lightest:    var(--theme-border);
+
+  --md-typeset-a-color:               var(--theme-link);
+
+  --md-primary-fg-color:              var(--theme-bg-surface);
+  --md-primary-fg-color--light:       var(--theme-text-bold);
+  --md-primary-fg-color--dark:        var(--theme-bg-base); 
+  --md-primary-bg-color:              var(--theme-text-main);
+
+  --md-accent-fg-color:               var(--theme-accent-main);
+  --md-accent-fg-color--transparent:  rgba(254, 128, 25, 0.1);
+  --md-accent-bg-color:               var(--theme-bg-surface);
+
+  --md-footer-bg-color:               var(--theme-bg-base);
+  --md-footer-bg-color--dark:         var(--theme-bg-base);
+
+  --md-inputs-bg-color:               var(--theme-bg-highlight);
+  --md-inputs-fg-color:               var(--theme-text-main);
+  
+  --md-typeset-table-color:           rgba(235, 219, 178, 0.05);
+
+  --md-admonition-bg-color:           var(--theme-bg-surface);
+  --md-admonition-fg-color:           var(--theme-text-main);
+
+  /* Code Block Logic for Dark Mode */
+  --md-code-bg-color:             var(--theme-bg-surface);
+  --md-code-fg-color:             var(--theme-text-main);
+  --md-code-hl-color:             var(--theme-bg-highlight);
+}
+
+/* ==========================================================================
+   SECTION 3: SHARED COMPONENT OVERRIDES
+   Styles that use the variables defined above.
+   These apply to BOTH modes automatically.
+   ========================================================================== */
+
+/* --- 3.1 SYNTAX HIGHLIGHTING SHARED LOGIC --- */
+:root {
+  --md-code-hl-keyword-color:     var(--code-keyword);
+  --md-code-hl-function-color:    var(--code-function);
+  --md-code-hl-string-color:      var(--code-string);
+  --md-code-hl-number-color:      var(--code-number);
+  --md-code-hl-special-color:     var(--status-special);
+  --md-code-hl-comment-color:     var(--code-comment);
+  --md-code-hl-variable-color:    var(--code-variable);
+  --md-code-hl-name-color:        var(--code-class);
+  --md-code-hl-operator-color:    var(--theme-text-main);
+  --md-code-hl-punctuation-color: var(--theme-text-muted);
+}
+
+/* --- 3.2 TYPOGRAPHY --- */
+strong, .md-nav__title {
+  color: var(--theme-text-bold);
+}
+
+.md-nav__item--section>.md-nav__link[for] {
+  color: var(--theme-nav-title);
+}
+
+/* Headings */
+h1 { color: var(--h1-color); font-weight: 800; }
+h2 { color: var(--h2-color); font-weight: 700; }
+h3 { color: var(--h3-color); font-weight: 600; }
+h4 { color: var(--h4-color); font-weight: 600; }
+h5 { color: var(--h5-color); font-weight: 600; }
+h6 { color: var(--h6-color); font-weight: 600; }
+
+/* Link Animation */
+.md-typeset a {
+  transition: color 0.2s ease;
+}
+.md-typeset a:hover {
+  color: var(--theme-accent-hover);
+}
+
+/* --- 3.3 ADMONITION BORDERS --- */
+.md-typeset .admonition {
+  border-width: 0 0 0 .4rem;
+}
+.md-typeset .admonition.note,
+.md-typeset .admonition.info {
+  border-color: var(--status-info);
+}
+.md-typeset .admonition.success,
+.md-typeset .admonition.tip {
+  border-color: var(--status-success);
+}
+.md-typeset .admonition.warning {
+  border-color: var(--status-warning);
+}
+.md-typeset .admonition.failure,
+.md-typeset .admonition.danger {
+  border-color: var(--status-danger);
+}
+
+/* ==========================================================================
+   SECTION 4: HERO SECTION (Landing Page)
+   ========================================================================== */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; 
+}
+
+.hero-container {
+  /* Layout */
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; 
+  align-items: flex-start;
+  
+  padding: 4rem; 
+  min-height: 100vh;
+  margin-top: -5rem;    
+  margin-bottom: -5rem; 
+  box-sizing: border-box; 
+  
+  /* Dynamic Background */
+  background: linear-gradient(
+    rgba(var(--hero-overlay-rgb), var(--hero-overlay-alpha)), 
+    rgba(var(--hero-overlay-rgb), var(--hero-overlay-alpha))
+  ), var(--hero-bg-image);
+  
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.hero-container h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--h1-color); 
+  margin: 0;
+  text-shadow: var(--hero-text-shadow);
+}
+
+.hero-container p {
+  font-size: 1.4rem;
+  color: var(--theme-text-main);
+  max-width: 600px;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  text-shadow: var(--hero-text-shadow);
+}

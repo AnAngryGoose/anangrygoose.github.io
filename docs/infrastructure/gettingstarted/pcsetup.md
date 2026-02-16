@@ -1,141 +1,184 @@
-# Server Setup 
+# Server Setup (Debian)
 
-* [Ubuntu Server 24.04 LTS Release Notes](https://ubuntu.com/download/server)
-* [Ubuntu Server Network Configuration](https://documentation.ubuntu.com/server/explanation/networking/configuring-networks/)
-* [OpenSSH Server Documentation](https://documentation.ubuntu.com/server/how-to/security/openssh-server/)
+* [Debian 12 Bookworm Release Notes :simple-debian:](https://www.debian.org/releases/bookworm/releasenotes)
+* [Debian Network Setup :material-lan:](https://wiki.debian.org/NetworkConfiguration)
+* [Debian SSH Documentation :material-console:](https://wiki.debian.org/SSH)
 
 ---
 
-### 1. Preparation & Media Creation
-
-Before touching the hardware, the installation media must be prepared on a separate computer.
+## 1. Preparation & Media Creation
 
 **A. Download ISO**
-Get the **[Ubuntu Server 24.04 LTS]((https://ubuntu.com/download/server))** (Long Term Support) ISO. Use whatever OS you want. I just used Ubuntu for this guide.
+Get the **[Small Installation Image (Netinst)](https://www.debian.org/distrib/netinst)**.
 
-* **Note:** Do not use the "Desktop" version for a server. The Server ISO is optimized for performance and headless operation (no monitor).
+!!! note "Architecture"
+For Lenovo M920q/M70q nodes, ensure you download the **amd64** ISO.
 
 **B. Flash to USB**
-Use **BalenaEtcher**, **Rufus**, `dd`, or another application to write the ISO to a USB drive (4GB+).
+Use **BalenaEtcher**, **Rufus**, or `dd` to write the ISO to a USB drive (4GB+).
 
 ---
 
-### 2. BIOS / UEFI Configuration
+## 2. BIOS / UEFI Configuration
 
-Mini PCs (like the Lenovo M920q) often ship with settings optimized for Windows office use. These must be adjusted for a Linux server.
+Mini PCs often ship with settings optimized for Windows. Adjust these for a Linux server.
 
-1. **Enter BIOS:** Insert the USB, power on, and rapidly tap the setup key (usually `F1`, `F2`, or `F12` for Lenovo/Dell/HP).
-2. **Secure Boot:** Set to **Disabled**. This ensures compatibility with third-party drivers (like Proxmox or specific NIC drivers) later on.
-3. **Power Behavior:** Look for "After Power Loss" or "AC Recovery" and set to **Power On**. This ensures the server reboots automatically after a power outage.
-4. **Boot Order:** Move "USB HDD" or your flash drive to the top of the list.
-
----
-
-### 3. Installation Process
-
-Boot from the USB. The installer (Subiquity) uses a text-based UI. Navigate with `Arrow Keys`, select with `Enter`, and toggle options with `Space`.
-
-**A. General Settings**
-
-* **Language/Keyboard:** Select your defaults.
-* **Base Install:** Choose "Ubuntu Server" (standard). The "Minimized" version is too stripped down for a beginner homelab.
-
-**B. Network (Critical Step)**
-By default, the server asks for a DHCP address. **Set a Static IP now** to avoid connection issues later.
-
-1. Select your Ethernet interface (e.g., `eth0` or `eno1`).
-2. Change "IPv4 Method" from DHCP to **Manual**.
-3. **Subnet:** Usually `192.168.1.0/24` (Check your router).
-4. **Address:** Pick an IP outside your router's DHCP range (e.g., `192.168.1.50`).
-5. **Gateway:** Your router's IP (e.g., `192.168.1.1`).
-6. **Name Servers:** `1.1.1.1` (Cloudflare) or `8.8.8.8` (Google).
-
-**C. Storage**
-
-* Select "Use an entire disk".
-* **LVM:** Keep "Set up this disk as an LVM group" checked. This allows for flexible partition resizing later. Not required, but it can help. Verify compatability with desired filesystem to be used.
-
-**D. Profile & SSH**
-
-* **Identity:** Set your hostname (e.g., `my-node-01`) and username.
-* **SSH Setup:** **Check the box [ ] Install OpenSSH server.**
-* *Do not skip this.* Without it, you cannot connect to the headless server remotely.
+1. **Enter BIOS:** Power on and rapidly tap the setup key (`F1` for Lenovo).
+2. **Secure Boot:** Set to **Disabled**.
+* *Reasoning:* While Debian supports Secure Boot, disabling it prevents headaches with third-party drivers (Nvidia) or unsigned kernel modules later.
 
 
+3. **Power Behavior:** Set "After Power Loss" to **Power On**.
+4. **Boot Order:** Prioritize the USB drive.
 
 ---
 
-### 4. Post-Install Configuration
+## 3. Installation Process
 
-Once installed, remove the USB and press Enter to reboot. From this point on, perform all steps via SSH from your main computer.
+Boot from USB. The Debian installer uses a classic text-based interface. Navigate with `Arrow Keys`, select with `Enter`, and toggle options with `Space`.
 
-**A. Connect via SSH**
-Open your terminal (or PowerShell on Windows) and connect:
+**A. Initial Settings**
 
-```bash
-ssh username@192.168.1.50
+* **Install:** Select `Graphical Install` (easier) or `Install` (text-only).
+* **Language/Location/Keyboard:** Select defaults.
+* **Hostname:** `vanth-node-01` (or your preference).
+* **Domain Name:** Leave blank (unless you have a local domain).
+
+**B. User & Password (Crucial)**
+
+!!! warning "Sudo Configuration"
+**Leave the 'Root password' field BLANK.**
+
+```
+If you leave the root password blank, the installer will automatically install `sudo` and add your new user to the sudo group. If you set a root password now, you will have to manually configure sudo later.
 
 ```
 
-*(Replace with the IP you set in Step 3B)*.
+* **Full name / Username:** Enter your details (e.g., `goose`).
+* **Password:** Set a strong password for this user.
 
-**B. Update System**
-Update the package repositories and upgrade installed packages:
+**C. Partitioning**
+
+* **Method:** "Guided - use entire disk and set up LVM".
+* **Partition Scheme:** "All files in one partition" (easiest for beginners).
+* **Confirm:** Select "Finish partitioning and write changes to disk" -> **Yes**.
+
+**D. Software Selection (Tasksel)**
+
+The installer will install the base system and then ask for additional software.
+
+* **Scan extra media?** No.
+* **Package Manager:** Select a mirror close to you (e.g., `deb.debian.org`).
+* **Software selection:**
+* [ ] Debian desktop environment (Uncheck this)
+* [ ] GNOME (Uncheck this)
+* [x] **SSH server** (Check this)
+* [x] **Standard system utilities** (Check this)
+
+
+
+---
+
+## 4. Post-Install Configuration
+
+Remove the USB and reboot. Log in via the physical terminal one last time to get the IP.
+
+### A. Network Configuration (Static IP)
+
+Debian uses `/etc/network/interfaces` by default, not Netplan.
+
+1. **Check Interface Name:**
+```bash
+ip link
+# Look for eno1, eth0, or enp3s0
+
+```
+
+
+2. **Edit Config:**
+```bash
+sudo nano /etc/network/interfaces
+
+```
+
+
+3. **Modify:**
+Replace `allow-hotplug eno1` and `iface eno1 inet dhcp` with:
+```bash
+# The primary network interface
+auto eno1
+iface eno1 inet static
+    address 192.168.1.50/24
+    gateway 192.168.1.1
+    # DNS servers
+    dns-nameservers 1.1.1.1 8.8.8.8
+
+```
+
+
+4. **Apply:**
+```bash
+sudo systemctl restart networking
+
+```
+
+
+
+### B. Connect via SSH
+
+Switch to your main PC terminal:
+
+```bash
+ssh goose@192.168.1.50
+
+```
+
+### C. Update System
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 
 ```
 
-**C. Verify Static IP (Netplan)**
-If you skipped the static IP step during install, you must configure `netplan`.
-Edit the config: `sudo nano /etc/netplan/00-installer-config.yaml`
-
-```yaml
-network:
-  ethernets:
-    eno1: # Check your interface name with 'ip a'
-      dhcp4: false
-      addresses:
-        - 192.168.1.50/24
-      routes:
-        - to: default
-          via: 192.168.1.1
-      nameservers:
-        addresses: [1.1.1.1, 8.8.8.8]
-  version: 2
-
-```
-
-Apply changes: `sudo netplan apply`.
-
 ---
 
-### 5. Quality of Life & Security
+## 5. Quality of Life & Security
 
-**A. Firewall (UFW)**
-Enable the firewall but **allow SSH first** to prevent locking yourself out.
+### A. Install QEMU Guest Agent (If VM)
+
+If this is running as a VM inside Proxmox:
 
 ```bash
-sudo ufw allow ssh
-sudo ufw enable
+sudo apt install qemu-guest-agent -y
+sudo systemctl enable --now qemu-guest-agent
 
 ```
 
-*Response: Command may disrupt existing ssh connections. Proceed with operation (y|n)?* Type `y`.
+### B. Prevent Sleep
 
-**B. Prevent Sleep (Laptop/Mini PC Specific)**
-Ensure the system doesn't suspend when idle.
+Prevent the Mini PC from suspending when idle:
 
 ```bash
 sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
 
 ```
 
+### C. Install Vital Tools
+
+Debian "Standard Utilities" is very barebones.
+
+```bash
+sudo apt install curl wget git htop vim tmux -y
+
+```
+
 ---
 
-### Troubleshooting
+## Troubleshooting
 
-* **"Permission Denied (publickey)":** You may have enabled "Import SSH Identity" during install but didn't provide a key. Use password authentication initially or add the `-o PubkeyAuthentication=no` flag to debug.
-* **No Internet:** Check your gateway settings in `netplan`. Try `ping 8.8.8.8`. If that works but `ping google.com` fails, check your `nameservers`.
-* **Fan Noise:** On some Mini PCs (Lenovo Tiny/Dell Micro), fan control packages like `lm-sensors` and `fancontrol` may be needed if the BIOS default is too aggressive.
+* **"Username is not in the sudoers file":** You likely set a root password during install.
+* *Fix:* Switch to root (`su -`), then run `usermod -aG sudo your_username`. Reboot.
+
+
+* **SSH Connection Refused:** Check if the service is running (`sudo systemctl status ssh`). If missing, `sudo apt install openssh-server`.
+* **DNS failures:** Check `/etc/resolv.conf`. It should contain `nameserver 1.1.1.1`. If not, your static IP config in `/etc/network/interfaces` might have a syntax error.

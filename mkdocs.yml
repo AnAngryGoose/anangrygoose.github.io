@@ -37,6 +37,24 @@ theme:
       # toggle:
       #   icon: material/brightness-4
       #   name: Switch to light mode
+
+      theme:
+
+      #### THis is correct mapping for toggling - colors are fucked up though, need fix. Ref the base gruvbox css
+  # palette:
+  #   # Light Mode -> Maps to [data-md-color-scheme="default"]
+  #   - media: "(prefers-color-scheme: light)"
+  #     scheme: default
+  #     toggle:
+  #       icon: material/brightness-7
+  #       name: Switch to Dark Mode
+
+  #   # Dark Mode -> Maps to [data-md-color-scheme="slate"]
+  #   - media: "(prefers-color-scheme: dark)"
+  #     scheme: slate
+  #     toggle:
+  #       icon: material/brightness-4
+  #       name: Switch to Light Mode
 extra_css:
   - stylesheets/gruvbox-dark.css
 extra_javascript:
@@ -68,6 +86,9 @@ markdown_extensions:
   - pymdownx.emoji:
       emoji_index: !!python/name:material.extensions.emoji.twemoji
       emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  # These are needed for grids
+  - attr_list # Allows for attribute lists on elements, e.g. `{.class #id key=value}`
+  - md_in_html # Allows Markdown inside HTML blocks, e.g. in tables or admonitions
 
 
 
@@ -99,8 +120,6 @@ nav:
       - MergerFS: infrastructure/filesystem/mergerfs.md
     - Docker: 
       - Overview: infrastructure/docker/docker.md
-      - Installing Docker on Debian: infrastructure/docker/dockerinstall.md
-      - Post-Installation: infrastructure/docker/dockerpostinstall.md
       - Cheat Sheet: infrastructure/docker/cheatsheet.md
     - git:
       - Git Basics: infrastructure/git/git.md
