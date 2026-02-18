@@ -79,6 +79,8 @@ markdown_extensions:
   - pymdownx.details  # (Optional) Enables collapsible "???" blocks
   # "SuperFences" allows for nesting code blocks in lists, etc.
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
   # Enables the "Copy to Clipboard" button (optional but recommended)
   - pymdownx.inlinehilite
   - pymdownx.snippets
@@ -97,7 +99,8 @@ markdown_extensions:
 nav:
   - Home: index.md
 
-  - Overview: overview/overview.md
+  - Overview: 
+    - Overview: overview/overview.md
 
   - Infrastructure:
     - Getting Started: 
